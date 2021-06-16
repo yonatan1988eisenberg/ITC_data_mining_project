@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import csv
 
 GAMES_URL = "https://www.metacritic.com/game"
-ARTICLES_URL = "https://www.metacritic.com/browse/games/release-date/new-releases/"
+PLATFORM_URL_HEAD = "https://www.metacritic.com/browse/games/release-date/new-releases/"
 SORTING_OPTIONS = ["/date", "/metascore"]
 SORT_BY_DATE = 0
 SORT_BY_METASCORE = 1
@@ -22,17 +22,17 @@ GET_HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWeb
 URL_LOCATION = -2
 
 
-def get_html_from_file(filename):
+def file_to_soup(filename):
     """
     This is a temp function, it gets an html from a file and returns a soup object
     """
-    with open(filename) as file:
+    with open(filename, encoding="utf8") as file:
         text_html = file.read()
         soup = BeautifulSoup(text_html, 'html.parser')
     return soup
 
 
-def get_http(url):
+def http_to_soup(url):
     """
     This function get a url address and returns it http as a soup object
     """
@@ -51,13 +51,13 @@ def main():
     # this is the scraping, uncomment it when done
     """
     try:
-        games_soup = get_http(GAMES_URL)
+        games_soup = http_to_soup(GAMES_URL)
     except ResourceWarning:
         exit()
     """
 
     # this is reading the html from file, comment it when scraping
-    games_soup = get_html_from_file("temp_game_html.txt")
+    games_soup = file_to_soup("temp_game_html.txt")
 
     platforms_module = games_soup.find('div', class_='platforms_wrap')
     platforms = platforms_module.find_all('li')
@@ -69,8 +69,7 @@ def main():
         writer.writerow(PLATFORMS_TABLE_HEADERS)
         for platform in platforms[:-1]:
             platform_name = platform.div.span.a.text
-            platform_url = str(platform.div.span.a).split("\"")[URL_LOCATION]
-            writer.writerow([id_num, platform_name, ARTICLES_URL + platform_name + SORTING_OPTIONS[SORT_BY_DATE]])
+            writer.writerow([id_num, platform_name, PLATFORM_URL_HEAD + platform_name + SORTING_OPTIONS[SORT_BY_DATE]])
             id_num += 1
 
 
