@@ -4,10 +4,10 @@ from main_menu_event import main_menu_event
 from print_submenu import print_submenu
 from get_num_of_articles_from_soup import get_num_of_articles_from_soup
 from scrape_search_page import scrape_search_page
+from check_input import check_input
 DOMAIN_URL = "https://www.metacritic.com"
 GAMES_URL = "/game"
 TIME_FRAMES_URL = "/browse/games/score/metascore/all/all/filtered"
-
 
 
 def main():
@@ -18,14 +18,9 @@ def main():
     3. print the data to the console
     :return:
     """
-    main_menu_list = ['Games by platform', 'Games by genre', 'Games by time frame']
     # 1:
     print("Welcome user!\n")
-          # "Data can be searched in a few methods:\n"
-          # "0. Games by platform\n"
-          # "1. Games by genre\n"
-          # "2. Games by time frame\n")
-    # user_menu = int(input("Please enter your choice:"))
+    main_menu_list = ['Games by platform', 'Games by genre', 'Games by time frame']
     user_menu = print_submenu(main_menu_list)
     if user_menu == 0:
         search_url = DOMAIN_URL + GAMES_URL
@@ -47,7 +42,7 @@ def main():
         print("The available sort options are available:")
         search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style1 sort')
 
-        print(search_url)
+        # print(search_url)
 
     elif user_menu == 1:
         search_url = DOMAIN_URL + GAMES_URL
@@ -64,7 +59,7 @@ def main():
         print("The available sort options are available:")
         search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style1 sort')
 
-        print(search_url)
+        # print(search_url)
 
     elif user_menu == 2:
         search_url = DOMAIN_URL + TIME_FRAMES_URL   # (search page)
@@ -86,12 +81,18 @@ def main():
         print("The available sort options are available:")
         search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style1 sort')
 
-        print(search_url)
+        # print(search_url)
 
-    # num_of_articles_to_fetch = input(f"There are {get_num_of_articles_from_soup(search_soup)} results\n"
-    #                                  f"How many would you like to fetch?")
-    #
-    # scrape_search_page(search_soup, search_url, num_of_articles_to_fetch)
+    num_of_articles_found = get_num_of_articles_from_soup(search_soup)
+    if num_of_articles_found == 0:
+        print("no results found, goodbye!")
+        exit()
+
+    print(f"Found {num_of_articles_found} resulsts, how many would you like to fetch?")
+    num_of_articles_to_fetch = check_input(num_of_articles_found)
+
+    scrape_search_page(search_soup, search_url, int(num_of_articles_to_fetch))
+
 
 if __name__ == "__main__":
     main()

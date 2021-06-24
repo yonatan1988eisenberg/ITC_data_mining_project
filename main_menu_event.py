@@ -2,12 +2,12 @@
 
 from print_submenu import print_submenu
 from http_to_soup import http_to_soup
-from get_wrap_options import get_wrap_options
+
 
 DOMAIN_URL = "https://www.metacritic.com"
 
 
-def main_menu_event(soup, search_url, header, options_class, exclude_last=False):
+def main_menu_event(soup, search_url, header, options_class, case):
     """
     This function gets a soup and search parameters to print the user options to choose from.
     :param soup: the html soup object we're looking at
@@ -17,12 +17,13 @@ def main_menu_event(soup, search_url, header, options_class, exclude_last=False)
     :param exclude_last: a flag to be risen when the last options should not be given to the user
     :return: updated soup and url
     """
-    options_list = get_wrap_options(soup, header, options_class)
-
-    if exclude_last:
-        options_names = [option.div.span.a.text for option in options_list[:-1]]
-    else:
-        options_names = [option.div.span.a.text for option in options_list]
+    module = soup.find(header, class_=options_class)
+    options_list = module.find_all('li')
+    if case == 'platform':
+        options_names = [option.div.span.a.text if option.div.span.a is not None
+                         else option.a.text for option in options_list[:-1]]
+    elif case == 'genre':
+        options_names = [option.a.text for option in options_list]
 
     user_option = options_list[print_submenu(options_names)]
     # updating url and soup
