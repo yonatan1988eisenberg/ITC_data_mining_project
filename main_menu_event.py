@@ -5,6 +5,7 @@ from http_to_soup import http_to_soup
 
 
 DOMAIN_URL = "https://www.metacritic.com"
+EXCLUDE_LEGACY = -1
 
 
 def main_menu_event(soup, search_url, header, options_class, case):
@@ -14,14 +15,14 @@ def main_menu_event(soup, search_url, header, options_class, case):
     :param search_url: the soup's url
     :param header: the object type we're looking for
     :param options_class: the object class we're looking for
-    :param exclude_last: a flag to be risen when the last options should not be given to the user
+    :param case: a flag allowing the function to deal with both platforms and genre main menu choices
     :return: updated soup and url
     """
     module = soup.find(header, class_=options_class)
     options_list = module.find_all('li')
     if case == 'platform':
         options_names = [option.div.span.a.text if option.div.span.a is not None
-                         else option.a.text for option in options_list[:-1]]
+                         else option.a.text for option in options_list[:EXCLUDE_LEGACY]]
     elif case == 'genre':
         options_names = [option.a.text for option in options_list]
 

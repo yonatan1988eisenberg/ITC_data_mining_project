@@ -1,10 +1,12 @@
 from http_to_soup import http_to_soup
 MAX_ARTICLES_PER_PAGE = 100
 DOMAIN_URL = "https://www.metacritic.com"
-GAMES_URL = "/game"
 
 
 def get_num_of_articles_from_soup(soup):
+    """
+    This function gets a search page's soup and returns the number of available games
+    """
 
     max_pages = soup.find('li', class_="page last_page")
     if max_pages is None:

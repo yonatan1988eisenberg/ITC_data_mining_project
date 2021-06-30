@@ -3,8 +3,6 @@ from tqdm import tqdm
 from final_data_scrape import scrape_data
 
 DOMAIN_URL = "https://www.metacritic.com"
-MAX_NUM_OF_ARTICLES_PER_PAGE = 100
-ARTICLES_TABLE_HEADERS = ["id", "Title", "url"]  # todo: add the rest of them
 FILE_NAME = "db.csv"
 
 def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
