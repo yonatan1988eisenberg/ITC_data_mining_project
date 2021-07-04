@@ -1,6 +1,6 @@
 from http_to_soup import http_to_soup
 from tqdm import tqdm
-from final_data_scrape import scrape_data
+from final_data_scrape import scrape_data, write_header_and_row
 
 DOMAIN_URL = "https://www.metacritic.com"
 FILE_NAME = "db.csv"
@@ -26,9 +26,9 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                     article_url = article_url.get('href')
                     article_soup = http_to_soup(DOMAIN_URL + article_url)
                     if articles_fetched == 0:
-                        scrape_data(article_soup).to_csv(file, mode='a', index=False, encoding='utf-8')
+                        write_header_and_row(article_soup)
                     else:
-                        scrape_data(article_soup).to_csv(file, header=False, mode='a', index=False, encoding='utf-8')
+                        scrape_data(article_soup)
                     articles_fetched += 1
                     pbar.update()
                     if articles_fetched == num_of_articles_to_fetch:
