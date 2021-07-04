@@ -1,9 +1,10 @@
 from http_to_soup import http_to_soup
 from tqdm import tqdm
 from final_data_scrape import scrape_data, write_header_and_row
+from configparser import ConfigParser
 
-DOMAIN_URL = "https://www.metacritic.com"
-FILE_NAME = "db.csv"
+config_object = ConfigParser()
+config_object.read("config.ini")
 
 def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     """
@@ -14,7 +15,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     articles_fetched = 0
 
     # open the csv file and write the header
-    with open(FILE_NAME, "w", newline='') as file:
+    with open(config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"], "w", newline='') as file:
         with tqdm(desc='fetching data', total=num_of_articles_to_fetch) as pbar:
             # while we haven't fetch enough articles, find all the articles in the page
             while articles_fetched < num_of_articles_to_fetch:
@@ -24,7 +25,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 for article in articles:
                     article_url = article.find('a', class_='title')
                     article_url = article_url.get('href')
-                    article_soup = http_to_soup(DOMAIN_URL + article_url)
+                    article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
                     if articles_fetched == 0:
                         write_header_and_row(article_soup)
                     else:
@@ -32,7 +33,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                     articles_fetched += 1
                     pbar.update()
                     if articles_fetched == num_of_articles_to_fetch:
-                        print("done!, you can find your data at " + FILE_NAME)
+                        print("done!, you can find your data at " + config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"])
                         return
                 # if we finished the page but need more articles, go to the next page
                 pages = search_soup.find('ul', class_="pages")
@@ -40,7 +41,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 for j in range(len(pages) - 1):
                     if pages[j].a is None:
                         next_page = pages[j + 1].a.get("href")
-                search_soup = http_to_soup(DOMAIN_URL + next_page)
+                search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
 
     print("error scraping!")
     return
