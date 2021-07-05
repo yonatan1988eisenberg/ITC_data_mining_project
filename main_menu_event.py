@@ -1,11 +1,11 @@
-
-
 from print_submenu import print_submenu
 from http_to_soup import http_to_soup
+from configparser import ConfigParser
+
+config_object = ConfigParser()
+config_object.read("config.ini")
 
 
-DOMAIN_URL = "https://www.metacritic.com"
-EXCLUDE_LEGACY = -1
 
 
 def main_menu_event(soup, search_url, header, options_class, case):
@@ -22,7 +22,7 @@ def main_menu_event(soup, search_url, header, options_class, case):
     options_list = module.find_all('li')
     if case == 'platform':
         options_names = [option.div.span.a.text if option.div.span.a is not None
-                         else option.a.text for option in options_list[:EXCLUDE_LEGACY]]
+                         else option.a.text for option in options_list[:int(config_object['MAIN_EVENT']['EXCLUDE_LEGACY'])]]
     elif case == 'genre':
         options_names = [option.a.text for option in options_list]
 
@@ -30,9 +30,9 @@ def main_menu_event(soup, search_url, header, options_class, case):
     # updating url and soup
     # either user_option.a or user_option.span.a holds the url
     if user_option.a is not None:
-        search_url = DOMAIN_URL + user_option.a.get('href')
+        search_url = config_object['USER_QUESTIONS']['DOMAIN_URL'] + user_option.a.get('href')
     else:
-        search_url = DOMAIN_URL + user_option.span.a.get('href')
+        search_url = config_object['USER_QUESTIONS']['DOMAIN_URL'] + user_option.span.a.get('href')
 
     soup = http_to_soup(search_url)
 

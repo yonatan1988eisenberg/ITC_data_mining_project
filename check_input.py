@@ -1,3 +1,8 @@
+from configparser import ConfigParser
+
+config_object = ConfigParser()
+config_object.read("config.ini")
+
 def check_input(max_opt):
     """
     This functions asks for the user for input which should be between 0 and max_opt.
@@ -6,14 +11,14 @@ def check_input(max_opt):
     """
     while True:
         try:
-            user_input = input("Please enter your choice:")
+            user_input = input(config_object['CHECK_INPUT']['CHOICE'])
             if int(user_input) < 0 or int(user_input) > max_opt:
-                print("Invalid integer was given")
+                print(config_object['CHECK_INPUT']['INVALID'])
                 continue
 
             return int(user_input)
         except ValueError:
-            print("Invalid integer was given")
+            print(config_object['CHECK_INPUT']['INVALID'])
 
 
 

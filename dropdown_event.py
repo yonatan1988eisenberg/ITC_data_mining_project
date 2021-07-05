@@ -1,9 +1,9 @@
-
 from print_submenu import print_submenu
 from http_to_soup import http_to_soup
+from configparser import ConfigParser
 
-DOMAIN_URL = "https://www.metacritic.com"
-
+config_object = ConfigParser()
+config_object.read("config.ini")
 
 def dropdown_event(soup, search_url, html_class):
     """
@@ -23,7 +23,7 @@ def dropdown_event(soup, search_url, html_class):
     # if different than the default option was chosen
     # .span.a holds link for default option
     if user_dropdown.a is not None:
-        search_url = DOMAIN_URL + user_dropdown.a.get('href')
+        search_url = config_object['USER_QUESTIONS']['DOMAIN_URL'] + user_dropdown.a.get('href')
         soup = http_to_soup(search_url)
 
     return soup, search_url

@@ -26,10 +26,10 @@ To deploy this project run
 
 #### How does one use your program?
 
-One simply runs main.py and is propmted to answer some questions.
-Answer the qeustions by tyiping the required numbers. 
+One simply runs main.py and is prompted to answer some questions.
+Answer the questions by typing the required numbers. 
 These will help narrow down the users search to the exact type
-of games to which he is interested in gathering information about?
+of games to which he is interested in gathering information about.
 
 #### Why does it take longer then usual?
 
