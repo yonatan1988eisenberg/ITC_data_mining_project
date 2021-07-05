@@ -6,9 +6,7 @@ config_object = ConfigParser()
 config_object.read("config.ini")
 
 
-
-
-def main_menu_event(soup, search_url, header, options_class, case):
+def main_menu_event(soup, search_url, header, options_class, case, search_code=None):
     """
     This function gets a soup and search parameters to print the user options to choose from.
     :param soup: the html soup object we're looking at
@@ -18,6 +16,7 @@ def main_menu_event(soup, search_url, header, options_class, case):
     :param case: a flag allowing the function to deal with both platforms and genre main menu choices
     :return: updated soup and url
     """
+
     module = soup.find(header, class_=options_class)
     options_list = module.find_all('li')
     if case == 'platform':
@@ -25,8 +24,11 @@ def main_menu_event(soup, search_url, header, options_class, case):
                          else option.a.text for option in options_list[:int(config_object['MAIN_EVENT']['EXCLUDE_LEGACY'])]]
     elif case == 'genre':
         options_names = [option.a.text for option in options_list]
+    if search_code is not None:
+        user_option = options_list[int(search_code)]
+    else:
+        user_option = options_list[print_submenu(options_names)]
 
-    user_option = options_list[print_submenu(options_names)]
     # updating url and soup
     # either user_option.a or user_option.span.a holds the url
     if user_option.a is not None:

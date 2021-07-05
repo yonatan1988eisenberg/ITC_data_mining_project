@@ -3,6 +3,7 @@ from configparser import ConfigParser
 config_object = ConfigParser()
 config_object.read("config.ini")
 
+
 def check_input(max_opt):
     """
     This functions asks for the user for input which should be between 0 and max_opt.

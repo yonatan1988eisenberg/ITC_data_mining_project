@@ -1,11 +1,10 @@
 from check_input import check_input
 
+
 def print_submenu(string_list):
     """
     This function prints a list and asks the user to choose one, it than verifies the input (via check_input function)
-    :param print_list: The list with options
-    :param min: int, the minimum option the user can choose
-    :param max: int, the maximum option the user can choose
+    :param string_list: The list of options, if it's a string it will be casted to a list
     :return: int, representing the user choice
     """
     if type(string_list) == str:

@@ -10,11 +10,29 @@ from each game in a CSV file.
 
 ## Deployment
 
-To deploy this project run
+This program helps the user navigate throught metacritic.com/game to a search page.
+It does so by getting input from user on available search parameters such as platform, dates etc.  
 
-```bash
-  main.py 
-```
+This program can be run in two modes:
+1. manually (when search_code is not provided)
+2. automaticly
+
+When the program is run manually it will help the user find the search page he is looking for by prompting available options.
+In auto-mode the user knows which search page is he looking for and knows the code to get there. 
+If the code is uknown run the program manually and the search code is the cancatanation of your input.
+
+usage in auto-mode: [program_name] [options]
+
+options:
+
+-search_code / -sc : a sting of ints indicating the search page the user whishes to scrape. 
+If not provided the program will run on manual mode.
+
+-fetch / -f : int; the number of articles to fetch from the search page. default is 100.
+Can be used only in combination with search_code. 
+
+-asc / -a : bool; some search pages allow to sort the results ascending. if a code to such a search page was used asc 
+can be chossen as True. default is False. Can be used only in combination with search_code. 
 
   
 ## Acknowledgements

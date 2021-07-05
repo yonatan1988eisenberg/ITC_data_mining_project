@@ -6,7 +6,8 @@ from configparser import ConfigParser
 config_object = ConfigParser()
 config_object.read("config.ini")
 
-def genre_event():
+
+def genre_event(search_code):
     """
     This function prints to the user the available genres to search for and allows the user to choose one.
     It then prompt available platforms and sort options for the user to choose.
@@ -15,16 +16,23 @@ def genre_event():
 
     search_url = config_object['USER_QUESTIONS']['DOMAIN_URL'] + config_object['USER_QUESTIONS']['GAMES_URL']
     search_soup = http_to_soup(search_url)
+    if search_code is None:
+        search_code = [None, None, None, None]
 
     # a. get available genres and input from user
-    search_soup, search_url = main_menu_event(search_soup, search_url, 'ul', 'genre_nav', case='genre')
+    search_soup, search_url = main_menu_event(search_soup, search_url, 'ul', 'genre_nav', case='genre',
+                                              search_code=search_code[1])
 
     # b. get available platforms and input from user
-    print(config_object['USER_QUESTIONS']['PLATFORMS'])
-    search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style2 platform')
+    if search_code[0] is not None:
+        print(config_object['USER_QUESTIONS']['PLATFORMS'])
+    search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style2 platform',
+                                             search_code=search_code[2])
 
     # c. get available sort options and input from user
-    print(config_object['USER_QUESTIONS']['SORT'])
-    search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style1 sort')
+    if search_code[0] is not None:
+        print(config_object['USER_QUESTIONS']['SORT'])
+    search_soup, search_url = dropdown_event(search_soup, search_url, 'mcmenu dropdown style1 sort',
+                                             search_code=search_code[3])
 
     return search_soup, search_url
