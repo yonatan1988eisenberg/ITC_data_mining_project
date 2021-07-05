@@ -6,10 +6,13 @@ def scrape_data(soup):
     This function gets a soup to an article page and scrape it for data
     :return: a pandas.dataframe object, containing all the scraped data
     """
-    try:
-        name_of_game = [(soup.find(class_="product_title")).h1.get_text()]
-    except:
-        name_of_game = None
+    # try:
+    #     name_of_game = [(soup.find(class_="product_title")).h1.get_text()]
+    # except:
+    #     name_of_game = None
+
+    name_of_game = None if soup.find(class_="product_title") is None \
+        else (soup.find(class_="product_title")).h1.get_text()
 
     try:
         main_platform = [(soup.find(class_="platform")).a.get_text().strip()]
