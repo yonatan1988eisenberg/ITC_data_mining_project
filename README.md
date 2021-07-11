@@ -54,6 +54,10 @@ of games to which he is interested in gathering information about.
 We implemented a sleep function to ensure the program runs smoothly.
 This has increased the total running time. 
 
+#### ERD
+
+![alt text](https://github.com/yonatan1988eisenberg/ITC_data_mining_project/blob/dc2e79aaeed6039753398edd9ce3f306a09fde80/database.PNG)
+
   
 ## Authors
 
