@@ -54,7 +54,7 @@ of games to which he is interested in gathering information about.
 We implemented a sleep function to ensure the program runs smoothly.
 This has increased the total running time. 
 
-#### ERD
+## ERD
 
 The Database has a few main tables:
 
