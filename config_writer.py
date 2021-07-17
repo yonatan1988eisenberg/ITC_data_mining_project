@@ -60,5 +60,13 @@ config_object['SCRAPE_CATEGORY'] = {
     'URL_LOCATION': -2
 }
 
+config_object['FINAL_DATA_SCRAPE'] = {
+    'HEADER_LIST': ['name of game', 'main platform', 'publisher', 'release date', 'Other Consoles',
+                    'metascore', 'number of metascore reviewers', 'user score', 'number of user reviews',
+                    'developer', 'num players', 'Genres', 'age rating', 'critic review_positive',
+                    'critic review mixed', 'critic review negative', 'user review positive',
+                    'user review mixed', 'user review negative']
+}
+
 with open('config.ini', 'w') as conf:
     config_object.write(conf)

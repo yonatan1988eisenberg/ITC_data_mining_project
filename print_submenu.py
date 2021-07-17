@@ -1,5 +1,9 @@
 from check_input import check_input
+from config_use_dict import config_use_dict
+from configparser import ConfigParser
 
+config_object = ConfigParser()
+config_object.read("config.ini")
 
 def print_submenu(string_list):
     """
@@ -8,13 +12,12 @@ def print_submenu(string_list):
     :return: int, representing the user choice
     """
     if type(string_list) == str:
-        print_list = string_list.split(',')
+        print_list = config_use_dict(string_list)
     else:
         print_list = string_list
 
     for index, item in enumerate(print_list):
-        striped_item = item.strip("][ ''")
-        print(f"{index}. {striped_item}")
+        print(f"{index}. {item}")
 
     user_choice = check_input(len(print_list) - 1)
 

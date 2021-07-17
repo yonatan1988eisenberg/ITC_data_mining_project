@@ -54,6 +54,37 @@ of games to which he is interested in gathering information about.
 We implemented a sleep function to ensure the program runs smoothly.
 This has increased the total running time. 
 
+## ERD
+
+The Database has a few main tables:
+
+Games: This tables has information regarding each game, such as the id, name, main platform, publisher, developer, age rating, number of players and release date. The main platfrom, publisher, developer and age rating are all foreign keys to other tables. 
+
+Publishers: This records all the publishers scraped.
+
+Developers: This records all the developers scraped.
+
+Age Ratings: This records all the age ratings scrapred. 
+
+Consoles: This records the name of all the consoles scraped. 
+
+Scores: This is a table that records the final critic score as well as the final user score. It also records the total number of critic scores and user scores.
+
+Critic Reviews: This tables records the number of positive, mixed and negative critic scores.
+
+User Reviews: This tables records the number of positive, mixed and negative user scores. 
+
+Genres: This records all the genres scraped.
+
+Game to Genres: This is a junction table between games and genres. 
+
+Game to Console: This is a junction table between game and console. 
+
+
+
+
+![alt text](https://github.com/yonatan1988eisenberg/ITC_data_mining_project/blob/dc2e79aaeed6039753398edd9ce3f306a09fde80/database.PNG)
+
   
 ## Authors
 

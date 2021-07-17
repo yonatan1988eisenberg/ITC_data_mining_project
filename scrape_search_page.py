@@ -1,7 +1,9 @@
 from http_to_soup import http_to_soup
 from tqdm import tqdm
-from final_data_scrape import scrape_data, write_header_and_row
+from final_data_scrape import scrape_data
 from configparser import ConfigParser
+from config_use_dict import config_use_dict
+import csv
 
 config_object = ConfigParser()
 config_object.read("config.ini")
@@ -17,6 +19,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     # open the csv file and write the header
     with open(config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"], "w", newline='') as file:
         with tqdm(desc='fetching data', total=num_of_articles_to_fetch) as pbar:
+            writer = csv.writer(file)
             # while we haven't fetch enough articles, find all the articles in the page
             while articles_fetched < num_of_articles_to_fetch:
                 articles = search_soup.find_all('td', class_='clamp-summary-wrap')
@@ -27,9 +30,10 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                     article_url = article_url.get('href')
                     article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
                     if articles_fetched == 0:
-                        write_header_and_row(article_soup)
+                        writer.writerow(config_use_dict(config_object['FINAL_DATA_SCRAPE']['HEADER_LIST']))
+                        writer.writerow(scrape_data(article_soup))
                     else:
-                        scrape_data(article_soup)
+                        writer.writerow(scrape_data(article_soup))
                     articles_fetched += 1
                     pbar.update()
                     if articles_fetched == num_of_articles_to_fetch:

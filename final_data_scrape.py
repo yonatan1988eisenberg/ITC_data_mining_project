@@ -1,19 +1,3 @@
-import csv
-
-name_list = ['name of game', 'main platform', 'publisher', 'release date', 'Other Consoles',
-             'metascore', 'number of metascore reviewers', 'user score', 'number of user reviews',
-             'developer', 'num players', 'Genres', 'age rating', 'critic review_positive',
-             'critic review mixed', 'critic review negative', 'user review positive',
-             'user review mixed', 'user review negative']
-
-
-def write_header_and_row(soup):
-    with open('db.csv', 'a', newline='') as db:
-        writer = csv.writer(db)
-        writer.writerow(name_list)
-    scrape_data(soup)
-
-
 def scrape_data(soup):
     list_of_scrape_uncehcked = ["soup.find(class_='product_title').h1.get_text()",
                                 "soup.find(class_='platform').a.get_text().strip()",
@@ -53,6 +37,4 @@ def scrape_data(soup):
                 list_of_scrape_uncehcked[i] = None
                 list_of_scrape_checked.append(None)
 
-    with open('db.csv', 'a', newline='') as db:
-        writer = csv.writer(db)
-        writer.writerow(list_of_scrape_checked)
+    return list_of_scrape_checked
