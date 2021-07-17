@@ -26,7 +26,7 @@ usage in auto-mode: [program_name] [options]
 options:
 
 -search_code / -sc : a sting of ints indicating the search page the user whishes to scrape. 
-If not provided the program will run on manual mode.
+if the search code is too long the program will use its first n digits. If not provided the program will run on manual mode.
 
 -fetch / -f : int; the number of articles to fetch from the search page. default is 100.
 Can be used only in combination with search_code. 
