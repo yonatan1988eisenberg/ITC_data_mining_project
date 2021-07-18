@@ -1,7 +1,7 @@
 import csv
 import pymysql
 from configparser import ConfigParser
-
+import re
 
 config_object = ConfigParser()
 config_object.read("config.ini")
@@ -19,11 +19,9 @@ cursor.execute(config_object['CREATE_DATABASE']['CREATE_TRIAL'])
 # Use Database
 cursor.execute(config_object['CREATE_DATABASE']['USE_TRIAL'])
 
-
 # Create Tables
 for i in config_object['CREATE_DATABASE']['LIST_OF_TABLES'].split("&&"):
     cursor.execute(f'{i}')
-
 
 # Insert Values
 with open('db.csv') as csvfile:
@@ -62,6 +60,17 @@ with open('db.csv') as csvfile:
                            list_of_paramaters[i])
             save_fetch.append(cursor.fetchone())
 
+        # FIX THE AUG/SEP issue
+        if row[config_object['CREATE_DATABASE']['NUM_PLAYERS']] == 'No Online Multiplayer' or \
+                row[config_object['CREATE_DATABASE']['NUM_PLAYERS']] == 'Online Multiplayer':
+            num_players = 1
+        elif row[config_object['CREATE_DATABASE']['NUM_PLAYERS']] == '':
+            num_players = 'NaN'
+        elif row[config_object['CREATE_DATABASE']['NUM_PLAYERS']] == 'Massively Multiplayer':
+            num_players = 'inf'
+        else:
+            num_players = re.findall(r'\d+', row[config_object['CREATE_DATABASE']['NUM_PLAYERS']])[0]
+
         # Insert into Game
         try:
             cursor.execute(
@@ -71,7 +80,7 @@ with open('db.csv') as csvfile:
                     save_fetch[0][config_object['CREATE_DATABASE']['PUB_ID']],
                     save_fetch[1][config_object['CREATE_DATABASE']['DEV_ID']],
                     save_fetch[2][config_object['CREATE_DATABASE']['AGE_ID']],
-                    row[config_object['CREATE_DATABASE']['REL_DATE']],
+                    str(num_players),
                     row[config_object['CREATE_DATABASE']['REL_DATE']]))
             g_id = cursor.lastrowid
         except pymysql.err.IntegrityError:
