@@ -83,7 +83,7 @@ Game to Console: This is a junction table between game and console.
 
 
 
-![alt text](https://github.com/yonatan1988eisenberg/ITC_data_mining_project/blob/dc2e79aaeed6039753398edd9ce3f306a09fde80/database.PNG)
+![alt text](https://github.com/yonatan1988eisenberg/ITC_data_mining_project/blob/2c41e22a8531e9e723915f9db728a5fbf2db29ea/database.PNG)
 
   
 ## Authors
