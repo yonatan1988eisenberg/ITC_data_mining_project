@@ -8,12 +8,15 @@ import csv
 config_object = ConfigParser()
 config_object.read("config.ini")
 
-def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
+
+def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger):
     """
     This function gets a soup and a url to a search page and fetch the first num_of_articles_to_fetch from
     it into a csv file
     :return: True if successful, otherwise False
     """
+    logger.info('fetching the articles')
+
     articles_fetched = 0
 
     # open the csv file and write the header
@@ -38,6 +41,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                     pbar.update()
                     if articles_fetched == num_of_articles_to_fetch:
                         print("done!, you can find your data at " + config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"])
+                        logger.info('fetched the articles')
                         return
                 # if we finished the page but need more articles, go to the next page
                 pages = search_soup.find('ul', class_="pages")
@@ -48,4 +52,5 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
 
     print("error scraping!")
+    logger.warning('encountered error while fetching articles')
     return
