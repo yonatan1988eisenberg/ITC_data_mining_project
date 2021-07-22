@@ -2,7 +2,7 @@ from http_to_soup import http_to_soup
 from tqdm import tqdm
 from final_data_scrape import scrape_data
 from configparser import ConfigParser
-from config_use_dict import config_use_dict
+from insert_data import create_database
 import csv
 
 config_object = ConfigParser()
@@ -17,35 +17,30 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     articles_fetched = 0
 
     # open the csv file and write the header
-    with open(config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"], "w", newline='') as file:
-        with tqdm(desc='fetching data', total=num_of_articles_to_fetch) as pbar:
-            writer = csv.writer(file)
-            # while we haven't fetch enough articles, find all the articles in the page
-            while articles_fetched < num_of_articles_to_fetch:
-                articles = search_soup.find_all('td', class_='clamp-summary-wrap')
-                # for every article in the page, get its url and send to the function which scrape the data from it
-                # and than update counter etc
-                for article in articles:
-                    article_url = article.find('a', class_='title')
-                    article_url = article_url.get('href')
-                    article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
-                    if articles_fetched == 0:
-                        writer.writerow(config_use_dict(config_object['FINAL_DATA_SCRAPE']['HEADER_LIST']))
-                        writer.writerow(scrape_data(article_soup))
-                    else:
-                        writer.writerow(scrape_data(article_soup))
-                    articles_fetched += 1
-                    pbar.update()
-                    if articles_fetched == num_of_articles_to_fetch:
-                        print("done!, you can find your data at " + config_object['SCRAPE_SEARCH_PAGE']["FILE_NAME"])
-                        return
-                # if we finished the page but need more articles, go to the next page
-                pages = search_soup.find('ul', class_="pages")
-                pages = pages.find_all('li')
-                for j in range(len(pages) - 1):
-                    if pages[j].a is None:
-                        next_page = pages[j + 1].a.get("href")
-                search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
+    with tqdm(desc='fetching data', total=num_of_articles_to_fetch) as pbar:
+
+        # while we haven't fetch enough articles, find all the articles in the page
+        while articles_fetched < num_of_articles_to_fetch:
+            articles = search_soup.find_all('td', class_='clamp-summary-wrap')
+            # for every article in the page, get its url and send to the function which scrape the data from it
+            # and than update counter etc
+            for article in articles:
+                article_url = article.find('a', class_='title')
+                article_url = article_url.get('href')
+                article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
+                create_database(scrape_data(article_soup))
+                articles_fetched +=1
+                pbar.update()
+                if articles_fetched == num_of_articles_to_fetch:
+                    print("done!, you can find your data in your Data Base")
+                    return
+            # if we finished the page but need more articles, go to the next page
+            pages = search_soup.find('ul', class_="pages")
+            pages = pages.find_all('li')
+            for j in range(len(pages) - 1):
+                if pages[j].a is None:
+                    next_page = pages[j + 1].a.get("href")
+            search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
 
     print("error scraping!")
     return

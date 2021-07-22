@@ -1,38 +1,84 @@
 import requests
-import json
 
-# twitch token get
-urlTwitch = 'https://id.twitch.tv/oauth2/token'
-headersTwitch = {'client_id': 'a146740t3ncae5ov0u7pjwwl12zrpm',
-                 'client_secret': 'rai1tprpb8cgc81ty05moimuk2fneo',
-                 'grant_type': 'client_credentials'}
-r = requests.post(urlTwitch, data=headersTwitch)
-access_token = r.json()['access_token']
+def integrate_api(game):
 
-# get game info
-game = '"Half-Life 2"'
-release_date = 	1428872400
-urlgame = 'https://api.igdb.com/v4/games'
-headersIGDB = {'Client-ID': 'a146740t3ncae5ov0u7pjwwl12zrpm',
-               'Authorization': 'Bearer ' + access_token}
+    # twitch token get
+    urlTwitch = 'https://id.twitch.tv/oauth2/token'
+    headersTwitch = {'client_id': 'a146740t3ncae5ov0u7pjwwl12zrpm',
+                     'client_secret': 'rai1tprpb8cgc81ty05moimuk2fneo',
+                     'grant_type': 'client_credentials'}
+    r = requests.post(urlTwitch, data=headersTwitch)
+    access_token = r.json()['access_token']
 
-dataQuery_game = f'search {game}; fields name, first_release_date,franchises,expansions,game_engines; where version_parent = n; limit 1;'
+    # get game info
+    # '"Half-Life 2"'
+    game = '"' + f'{game}' + '"'
+    release_date = 1428872400
 
-r3 = requests.post(urlgame, headers=headersIGDB, data=dataQuery_game)
-print(r3.json())
-#Get franchises
-urlfranchise = 'https://api.igdb.com/v4/franchises'
-dataQuery_game = f'fields id, name; where id = 425;'
+    urlgame = 'https://api.igdb.com/v4/games'
 
-r4 = requests.post(urlfranchise, headers=headersIGDB, data= dataQuery_game)
+    headersIGDB = {'Client-ID': 'a146740t3ncae5ov0u7pjwwl12zrpm',
+                   'Authorization': 'Bearer ' + access_token}
 
-print(r4.json())
+    dataQuery_game = f'search {game}; fields name, franchises,game_engines,player_perspectives; where version_parent ' \
+                     f'= n; limit 1; '
 
-#Get game engines
+    r3 = requests.post(urlgame, headers=headersIGDB, data=dataQuery_game)
 
-urlgame_engine = 'https://api.igdb.com/v4/game_engines'
-dataQuery_game_engines = f'fields id, name; where id = 3;'
+    if r3.json() == []:
+        franchise_num = None
+        game_eng_num = None
+        plr_prspctv_num = None
+        franchises_name = None
+        game_engines_name = None
+        player_perspectives_name = None
+    else:
 
-r5 = requests.post(urlgame_engine, headers=headersIGDB, data= dataQuery_game_engines)
+        try:
+            franchise_num = r3.json()[0]['franchises'][0]
+            # Get franchises
+            urlfranchise = 'https://api.igdb.com/v4/franchises'
+            dataQuery_game = f'fields id, name; where id = {franchise_num};'
 
-print(r5.json())
+            r4 = requests.post(urlfranchise, headers=headersIGDB, data=dataQuery_game)
+
+            franchises_name = r4.json()[0]['name']
+        except KeyError:
+            franchise_num = None
+            franchises_name = None
+
+        try:
+
+            game_eng_num = r3.json()[0]['game_engines'][0]
+            # Get game engines
+
+            urlgame_engine = 'https://api.igdb.com/v4/game_engines'
+            dataQuery_game_engines = f'fields id, name; where id = {game_eng_num};'
+
+            r5 = requests.post(urlgame_engine, headers=headersIGDB, data=dataQuery_game_engines)
+
+            game_engines_name = r5.json()[0]['name']
+        except KeyError:
+            game_eng_num = None
+            game_engines_name = None
+
+        try:
+            plr_prspctv_num = r3.json()[0]['player_perspectives']
+
+            # Get player_perspectives
+            player_perspectives_name = []
+            for i in range(len(plr_prspctv_num)):
+                urlgame_engine = 'https://api.igdb.com/v4/player_perspectives'
+                dataQuery_game_engines = f'fields id, name; where id = {plr_prspctv_num[i]};'
+
+                r6 = requests.post(urlgame_engine, headers=headersIGDB, data=dataQuery_game_engines)
+
+                player_perspectives_name.append(r6.json()[0]['name'])
+        except KeyError:
+            plr_prspctv_num = None
+            player_perspectives_name = None
+
+    return franchise_num, game_eng_num, plr_prspctv_num, franchises_name, game_engines_name, player_perspectives_name
+
+
+
