@@ -10,13 +10,13 @@ def create_database(list_of_data):
 
     # Make Connection
     conn = pymysql.connect(host='localhost', user='root',
-                           password='Weasil123', cursorclass=pymysql.cursors.DictCursor)  # give ur username, password
+                           password='pnmqcX78k', cursorclass=pymysql.cursors.DictCursor)  # give ur username, password
 
     # Make Cursor
     cursor = conn.cursor()
 
     # Select Database
-    cursor.execute('USE trial_1')
+    cursor.execute('USE metacritic_db')
 
     # Get API data
     franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, player_perspectives_name_d \

@@ -3,10 +3,15 @@ from tqdm import tqdm
 from final_data_scrape import scrape_data
 from configparser import ConfigParser
 from insert_data import create_database
+from init_mysql_conn import init_mysql_conn, sql_query
+import getpass
+from create_tables import create_tables
+from insert_row_to_table import insert_row_to_table
 import csv
 
 config_object = ConfigParser()
 config_object.read("config.ini")
+
 
 def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     """
@@ -14,9 +19,21 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     it into a csv file
     :return: True if successful, otherwise False
     """
+
+    db_name = 'metacritic_db'
     articles_fetched = 0
 
-    # open the csv file and write the header
+    # initialize mysql connection
+    password = input('please enter mysql password:')
+    sql_conn = init_mysql_conn(password=password)
+    # check if the database already exists. If not, create it and the tables
+    if isinstance(sql_query(sql_conn, 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s;',
+                            db_name), tuple):
+        sql_query(sql_conn, f'CREATE DATABASE %s', db_name)
+        sql_conn = init_mysql_conn(password=password, db=db_name)
+        create_tables(sql_conn)
+
+    # start scraping the articles from the search page
     with tqdm(desc='fetching data', total=num_of_articles_to_fetch) as pbar:
 
         # while we haven't fetch enough articles, find all the articles in the page
@@ -28,7 +45,8 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 article_url = article.find('a', class_='title')
                 article_url = article_url.get('href')
                 article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
-                create_database(scrape_data(article_soup))
+                insert_row_to_table(scrape_data(article_soup))
+                # create_database(scrape_data(article_soup))
                 articles_fetched +=1
                 pbar.update()
                 if articles_fetched == num_of_articles_to_fetch:

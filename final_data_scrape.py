@@ -1,5 +1,5 @@
 def scrape_data(soup):
-    list_of_scrape_uncehcked = ["soup.find(class_='product_title').h1.get_text()",
+    list_of_scrape_unchecked = ["soup.find(class_='product_title').h1.get_text()",
                                 "soup.find(class_='platform').a.get_text().strip()",
                                 "soup.find('div', class_='product_data').find('a').text.strip()",
                                 "soup.find('li', class_='summary_detail release_data').find(class_='data').text",
@@ -26,15 +26,30 @@ def scrape_data(soup):
 
     list_of_scrape_checked = []
 
-    for i in range(len(list_of_scrape_uncehcked)):
-        if type(list_of_scrape_uncehcked[i]) == list:
-            list_of_scrape_checked.append(list_of_scrape_uncehcked[i])
+    """    
+    for unchecked in list_of_scrape_unchecked:
+        if isinstance(unchecked, list):
+            list_of_scrape_checked.append(unchecked)
 
         else:
             try:
-                list_of_scrape_checked.append(eval(list_of_scrape_uncehcked[i]))
+                list_of_scrape_checked.append(eval(unchecked))
             except:
-                list_of_scrape_uncehcked[i] = None
+                unchecked = None
+                list_of_scrape_checked.append(None)
+
+    return list_of_scrape_checked
+    """
+
+    for i in range(len(list_of_scrape_unchecked)):
+        if type(list_of_scrape_unchecked[i]) == list:
+            list_of_scrape_checked.append(list_of_scrape_unchecked[i])
+
+        else:
+            try:
+                list_of_scrape_checked.append(eval(list_of_scrape_unchecked[i]))
+            except:
+                list_of_scrape_unchecked[i] = None
                 list_of_scrape_checked.append(None)
 
     return list_of_scrape_checked
