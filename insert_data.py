@@ -3,6 +3,7 @@ from configparser import ConfigParser
 import re
 from integrate_api import integrate_api
 from insert_row_to_table import insert_row_to_table
+from init_mysql_conn import sql_query
 
 
 def create_database(row_dict, sql_conn):
@@ -14,13 +15,14 @@ def create_database(row_dict, sql_conn):
         = integrate_api(row_dict['name_of_game'])
 
     console_id_list = [config_object['LIST_OF_DATA']['main platform']]
-    #
+
+    sql_query(sql_conn, 'USE metacritic_db;')
     # Insert Publisher
     insert_row_to_table(data={'name': row_dict['publisher']}, table='publishers', unique_col='name',
                         unique_val=row_dict['publisher'], sql_conn=sql_conn)
 
     # Insert Developer
-    insert_row_to_table(data={'name': row_dict['developer']}, table='developers', unique_col='name',
+    insert_row_to_table(data={'name': row_dict['developer']}, table='developer', unique_col='name',
                         unique_val=row_dict['developer'], sql_conn=sql_conn)
 
     # Insert Age_Rating
@@ -28,25 +30,28 @@ def create_database(row_dict, sql_conn):
                         unique_val=row_dict['age_rating'], sql_conn=sql_conn)
 
     # Insert Franchise
+    insert_row_to_table(data={'id': franchise_num_d, 'name': franchises_name_d}, table='franchise', unique_col='name',
+                        unique_val=franchises_name_d, sql_conn=sql_conn)
+    sql_conn.commit()
     # Insert Game_Engine
     # Insert player_perspective
     # todo: insert all of them
 
     # Insert values into Consoles
 
-    full_list_of_consoles = []
-    full_list_of_consoles.append(list_of_data[int(config_object['LIST_OF_DATA']['main platform'])])
-    full_list_of_consoles += list_of_data[int(config_object['LIST_OF_DATA']['Other Consoles'])]
-    for i in range(len(full_list_of_consoles)):
-
-        cursor.execute('SELECT Console_id FROM consoles WHERE Console_name LIKE %s',
-                       (full_list_of_consoles[i],))
-        Console_id_fetch = cursor.fetchone()
-        if Console_id_fetch == None:
-            cursor.execute('INSERT INTO consoles (Console_name) VALUE (%s)',
-                           (full_list_of_consoles[i],))
-        else:
-            pass
+    # full_list_of_consoles = []
+    # full_list_of_consoles.append(list_of_data[int(config_object['LIST_OF_DATA']['main platform'])])
+    # full_list_of_consoles += list_of_data[int(config_object['LIST_OF_DATA']['Other Consoles'])]
+    # for i in range(len(full_list_of_consoles)):
+    #
+    #     cursor.execute('SELECT Console_id FROM consoles WHERE Console_name LIKE %s',
+    #                    (full_list_of_consoles[i],))
+    #     Console_id_fetch = cursor.fetchone()
+    #     if Console_id_fetch == None:
+    #         cursor.execute('INSERT INTO consoles (Console_name) VALUE (%s)',
+    #                        (full_list_of_consoles[i],))
+    #     else:
+    #         pass
 
     # Insert Value into Genre
     """

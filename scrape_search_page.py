@@ -24,7 +24,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     articles_fetched = 0
 
     # initialize mysql connection
-    password = 'pnmqcX78k' #input('please enter mysql password:')
+    password = 'Weasil123' #input('please enter mysql password:')
     sql_conn = init_mysql_conn(password=password)
     # check if the database already exists. If not, create it and the tables
     # sql_query(sql_conn, 'DROP DATABASE metacritic_db')

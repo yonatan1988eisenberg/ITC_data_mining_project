@@ -16,17 +16,29 @@ def insert_row_to_table(data, table, unique_col, unique_val, sql_conn):
     :return: the id of the row (new or existing)
     """
 
-    query_res = sql_query(sql_conn, f"SELECT * From {table} WHERE {unique_col} LIKE '{unique_val}'")
+    query_res = sql_query(sql_conn, f"SELECT * From {table} WHERE {unique_col} LIKE %s", (f'%{unique_val}',))
 
     if query_res:
-        data_string = "".join([f'{col} = {val},' for col, val in data.items()])[-1]
-        sql_query(sql_conn, f"UPDATE {table} SET {data_string} WHERE {unique_col} LIKE '{unique_val}'")
+        data_string = [f'{col} = "{val}"' for col, val in data.items()][0]
+        sql_query(sql_conn, f"UPDATE {table} SET {data_string} WHERE {unique_col} LIKE %s", (f'%{unique_val}',))
     else:
-        for col, val in data.items():
-            col_string = "".join(f' {col},')[:-1]
-            val_string = "".join(f' {val},')[:-1]
-        sql_query(sql_conn, f'INSERT INTO {table} ({col_string}) VALUES ({val_string})')
+        if len(data) == 1:
+            for col, val in data.items():
+                col_string = "".join(f' {col},')[:-1]
+                val_string = "".join(f' {val},')[:-1]
+            sql_query(sql_conn, f'INSERT INTO {table} ({col_string}) VALUES %s', ({val_string},))
+        else:
+            num_s = ('%s, ' * len(data)).strip(" , ")
+            my_lst_1 = []
+            my_lst_2 = []
+            for i in data.keys():
+                my_lst_1.append(i)
+            for i in data.values():
+                my_lst_2.append(str(i))
 
-    row_id = sql_conn.cursor.lastrowid
 
-    return row_id
+            sql_query(sql_conn, f'INSERT INTO {table} (%s,%s) VALUES (%s,%s)',((my_lst_1)[0],(my_lst_1)[1],(my_lst_2)[0],{(my_lst_2)[1]}))
+
+    # row_id = sql_conn.cursor.lastrowid
+    #
+    # return row_id
