@@ -1,4 +1,5 @@
 def scrape_data(soup):
+
     list_of_scrape_unchecked = ["soup.find(class_='product_title').h1.get_text()",
                                 "soup.find(class_='platform').a.get_text().strip()",
                                 "soup.find('div', class_='product_data').find('a').text.strip()",
@@ -25,7 +26,26 @@ def scrape_data(soup):
                                 ]
 
     list_of_scrape_checked = []
-
+    keys = ['name_of_game',
+            'main_platform',
+            'publisher',
+            'release_date',
+            'other_consoles',
+            'metascore',
+            'number_of_metascore_reviewers',
+            'user_score',
+            'number_of_user_reviews',
+            'developer',
+            'num_players',
+            'genres',
+            'age_rating',
+            'critic_review_positive',
+            'critic_review_mixed',
+            'critic_review_negative',
+            'user_review_positive',
+            'user_review_mixed',
+            'user_review_negative'
+            ]
     """    
     for unchecked in list_of_scrape_unchecked:
         if isinstance(unchecked, list):
@@ -52,4 +72,6 @@ def scrape_data(soup):
                 list_of_scrape_unchecked[i] = None
                 list_of_scrape_checked.append(None)
 
-    return list_of_scrape_checked
+    row_data = {keys[i]: list_of_scrape_checked[i] for i in range(len(keys))}
+
+    return row_data

@@ -2,34 +2,31 @@ import pymysql
 from configparser import ConfigParser
 import re
 from integrate_api import integrate_api
-def insert_row_to_table(row, table, unique, connection, list_of_data):
-    """
-    This function gets a row to be inserted to a table. If the row exists the data will be overwritten
-    :param row:
-    :param table:
-    :param unique:
-    :return:
-    """
-    config_object = ConfigParser()
-    config_object.read("config.ini")
-    # Get API data
-    franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, player_perspectives_name_d \
-        = integrate_api(list_of_data[0])
-    console_id_list = [config_object['LIST_OF_DATA']['main platform']]
+from init_mysql_conn import sql_query
 
-    # Insert Publisher
-    if list_of_data[int(config_object['LIST_OF_DATA']['publisher'])] == None:
-        pub_id = None
-        pass
+
+def insert_row_to_table(data, table, unique_col, unique_val, sql_conn):
+    """
+    This function checks if a row exists in a table. if it does it updates it, if not it creates it
+    :param data: a dictionary containing the columns (keys) and values for the row
+    :param table: the table we want to insert into
+    :param unique_col: the column by which we will verify the row doesn't have duplicates
+    :param unique_val: the value to search for in unique_col - must be string!
+    :param sql_conn: to the mysql local server
+    :return: the id of the row (new or existing)
+    """
+
+    query_res = sql_query(sql_conn, f"SELECT * From {table} WHERE {unique_col} LIKE '{unique_val}'")
+
+    if query_res:
+        data_string = "".join([f'{col} = {val},' for col, val in data.items()])[-1]
+        sql_query(sql_conn, f"UPDATE {table} SET {data_string} WHERE {unique_col} LIKE '{unique_val}'")
     else:
-        cursor.execute('SELECT Publisher_id FROM publisher WHERE Publisher_name LIKE %s',
-                       (list_of_data[int(config_object['LIST_OF_DATA']['publisher'])],))
-        publisher_id_fetch = cursor.fetchone()
-        if publisher_id_fetch == None:
-            cursor.execute('INSERT INTO Publisher (Publisher_name) VALUE (%s)',
-                           (list_of_data[int(config_object['LIST_OF_DATA']['publisher'])],))
-            pub_id = cursor.lastrowid
+        for col, val in data.items():
+            col_string = "".join(f' {col},')[:-1]
+            val_string = "".join(f' {val},')[:-1]
+        sql_query(sql_conn, f'INSERT INTO {table} ({col_string}) VALUES ({val_string})')
 
-        else:
-            pub_id = publisher_id_fetch['Publisher_id']
-            pass
+    row_id = sql_conn.cursor.lastrowid
+
+    return row_id

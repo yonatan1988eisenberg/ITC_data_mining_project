@@ -20,16 +20,17 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     :return: True if successful, otherwise False
     """
 
-    db_name = 'metacritic_db'
+    db_name = "metacritic_db"
     articles_fetched = 0
 
     # initialize mysql connection
-    password = input('please enter mysql password:')
+    password = 'pnmqcX78k' #input('please enter mysql password:')
     sql_conn = init_mysql_conn(password=password)
     # check if the database already exists. If not, create it and the tables
+    # sql_query(sql_conn, 'DROP DATABASE metacritic_db')
     if isinstance(sql_query(sql_conn, 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s;',
                             db_name), tuple):
-        sql_query(sql_conn, f'CREATE DATABASE %s', db_name)
+        sql_query(sql_conn, f'CREATE DATABASE {db_name};')
         sql_conn = init_mysql_conn(password=password, db=db_name)
         create_tables(sql_conn)
 
@@ -45,8 +46,8 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 article_url = article.find('a', class_='title')
                 article_url = article_url.get('href')
                 article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
-                insert_row_to_table(scrape_data(article_soup))
-                # create_database(scrape_data(article_soup))
+                # insert_row_to_table(scrape_data(article_soup))
+                create_database(scrape_data(article_soup), sql_conn)
                 articles_fetched +=1
                 pbar.update()
                 if articles_fetched == num_of_articles_to_fetch:

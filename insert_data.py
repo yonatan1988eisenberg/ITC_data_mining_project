@@ -2,29 +2,54 @@ import pymysql
 from configparser import ConfigParser
 import re
 from integrate_api import integrate_api
+from insert_row_to_table import insert_row_to_table
 
 
-def create_database(list_of_data):
+def create_database(row_dict, sql_conn):
     config_object = ConfigParser()
     config_object.read("config.ini")
 
-    # Make Connection
-    conn = pymysql.connect(host='localhost', user='root',
-                           password='pnmqcX78k', cursorclass=pymysql.cursors.DictCursor)  # give ur username, password
-
-    # Make Cursor
-    cursor = conn.cursor()
-
-    # Select Database
-    cursor.execute('USE metacritic_db')
-
     # Get API data
     franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, player_perspectives_name_d \
-        = integrate_api(list_of_data[0])
+        = integrate_api(row_dict['name_of_game'])
 
     console_id_list = [config_object['LIST_OF_DATA']['main platform']]
     #
     # Insert Publisher
+    insert_row_to_table(data={'name': row_dict['publisher']}, table='publishers', unique_col='name',
+                        unique_val=row_dict['publisher'], sql_conn=sql_conn)
+
+    # Insert Developer
+    insert_row_to_table(data={'name': row_dict['developer']}, table='developers', unique_col='name',
+                        unique_val=row_dict['developer'], sql_conn=sql_conn)
+
+    # Insert Age_Rating
+    insert_row_to_table(data={'name': row_dict['age_rating']}, table='age_rating', unique_col='name',
+                        unique_val=row_dict['age_rating'], sql_conn=sql_conn)
+
+    # Insert Franchise
+    # Insert Game_Engine
+    # Insert player_perspective
+    # todo: insert all of them
+
+    # Insert values into Consoles
+
+    full_list_of_consoles = []
+    full_list_of_consoles.append(list_of_data[int(config_object['LIST_OF_DATA']['main platform'])])
+    full_list_of_consoles += list_of_data[int(config_object['LIST_OF_DATA']['Other Consoles'])]
+    for i in range(len(full_list_of_consoles)):
+
+        cursor.execute('SELECT Console_id FROM consoles WHERE Console_name LIKE %s',
+                       (full_list_of_consoles[i],))
+        Console_id_fetch = cursor.fetchone()
+        if Console_id_fetch == None:
+            cursor.execute('INSERT INTO consoles (Console_name) VALUE (%s)',
+                           (full_list_of_consoles[i],))
+        else:
+            pass
+
+    # Insert Value into Genre
+    """
     if list_of_data[int(config_object['LIST_OF_DATA']['publisher'])] == None:
         pub_id = None
         pass
@@ -232,3 +257,4 @@ def create_database(list_of_data):
         pass
 
     conn.commit()
+    """

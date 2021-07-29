@@ -26,6 +26,8 @@ def sql_query(connection, query, holders=None):
     :param holders: placeholders values, default is None
     :return: the query return value
     """
+
     with connection.cursor() as cursor:
         cursor.execute(query, args=holders)
-        return cursor.fetchall()
+        res = cursor.fetchall()
+        return res

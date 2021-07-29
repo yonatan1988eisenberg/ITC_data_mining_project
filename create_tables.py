@@ -11,8 +11,8 @@ config_object.read("config.ini")
 def create_tables(connection):
 
     tables_creation_queries = [
-        'CREATE TABLE Publisher (Publisher_id int AUTO_INCREMENT PRIMARY KEY,\
-                 Publisher_name varchar(250) NOT NULL, UNIQUE (Publisher_name))',
+        'CREATE TABLE publishers (id int AUTO_INCREMENT PRIMARY KEY,\
+                 name varchar(250) NOT NULL, UNIQUE (name))',
 
         'CREATE TABLE Developer (Developer_id int AUTO_INCREMENT PRIMARY KEY, \
         Developer_name varchar(250) NOT NULL, UNIQUE (Developer_name))',
