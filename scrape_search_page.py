@@ -26,7 +26,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     password = 'pnmqcX78k' #input('please enter mysql password:')
     sql_conn = init_mysql_conn(password=password)
     # check if the database already exists. If not, create it and the tables
-    sql_query(sql_conn, 'DROP DATABASE metacritic_db')
+    # sql_query(sql_conn, 'DROP DATABASE metacritic_db')
 
     if not sql_query(sql_conn, 'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = %s;', db_name):
         sql_query(sql_conn, f'CREATE DATABASE {db_name};')
@@ -47,6 +47,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
                 # insert_row_to_table(scrape_data(article_soup))
                 data_dict = scrape_data(article_soup)
+                # todo implement a function which scrapes the data from the API and adds it to data_dict
                 # insert_row_to_database(data_dict, sql_conn)
                 articles_fetched += insert_row_to_database(data_dict, sql_conn)
                 pbar.update()

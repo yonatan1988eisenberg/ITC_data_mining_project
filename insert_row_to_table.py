@@ -18,19 +18,18 @@ def insert_row_to_table(data_dict, table, unique_col, unique_val, sql_conn):
     if unique_val is None:
         return None
     if isinstance(unique_col, list):
-        query_where = "".join([f'CAST({col} as CHAR) LIKE %s AND ' for col in unique_col])[:-5]
+        query_where = "".join([f'CAST({col} as CHAR) LIKE %s AND ' for col in unique_col ])[:-5]# if col is not None
     else:
         query_where = f'CAST({unique_col} as CHAR) LIKE %s'
     query_res = sql_query(sql_conn, f"SELECT * From {table} WHERE " + query_where, unique_val)
     # CAST({unique_col} as CHAR) LIKE %s", unique_val)
-
     if query_res:
         if 'id' in query_res[0].keys():
             row_id = query_res[0]['id']
         elif 'game_id' in query_res[0].keys():
             row_id = query_res[0]['game_id']
-        data_string = "".join([f"{col} = '{val}', " for col, val in data_dict.items()])[:-2]
-        sql_query(sql_conn, f"UPDATE {table} SET {data_string} WHERE {unique_col} LIKE %s", unique_val)
+        # data_string = "".join([f"{col} = '{val}', " for col, val in data_dict.items()])[:-2]
+        # sql_query(sql_conn, f"UPDATE {table} SET {data_string} WHERE {unique_col} LIKE %s", unique_val)
     else:
         col_string = ""
         vals = []

@@ -30,9 +30,9 @@ def insert_row_game_to_x_table(ids_dict, table, sql_conn, data_dict=None):
     # CAST({unique_col} as CHAR) LIKE %s", unique_val)
 
     if query_res:
-        row_id = {}
-        for key, val in query_res:
-            row_id[key] = val
+        row_id = query_res
+        # for key, val in query_res:
+        #     row_id[key] = val
     else:
         col_string = ""
         vals = []
