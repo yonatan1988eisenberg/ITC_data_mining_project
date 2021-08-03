@@ -1,3 +1,5 @@
+from integrate_api import integrate_api
+
 def scrape_data(soup):
 
     list_of_scrape_unchecked = ["soup.find(class_='product_title').h1.get_text()",
@@ -74,4 +76,11 @@ def scrape_data(soup):
 
     row_data = {keys[i]: list_of_scrape_checked[i] for i in range(len(keys))}
 
+    list_of_api_appends = ['franchise_num', 'game_eng_num', 'plr_prspctv_num', 'franchises_name', 'game_engines_name', 'player_perspectives_name']
+    for count, i in enumerate(integrate_api(row_data['name_of_game'])):
+        row_data[list_of_api_appends[count]]= i
+
+
     return row_data
+
+

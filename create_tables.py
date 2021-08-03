@@ -27,12 +27,12 @@ def create_tables(sql_conn):
         UNIQUE (name))',
 
         'CREATE TABLE franchises (\
-        id int PRIMARY KEY,\
+        id int AUTO_INCREMENT PRIMARY KEY,\
         name varchar(250) NOT NULL, \
         UNIQUE (name))',
 
         'CREATE TABLE game_engines (\
-        id int PRIMARY KEY,\
+        id int AUTO_INCREMENT PRIMARY KEY,\
         name varchar(250) NOT NULL, \
         UNIQUE (name))',
 
@@ -41,6 +41,8 @@ def create_tables(sql_conn):
         name varchar(250) UNIQUE, \
         publisher_id int, \
         age_rating_id int, \
+        franchise_id int, \
+        game_engine_id int, \
         num_players varchar(250), \
         release_date varchar(250), \
         FOREIGN KEY(publisher_id) REFERENCES publishers(id), \
@@ -52,10 +54,10 @@ def create_tables(sql_conn):
         # franchise_id int, \
         # game_engine_id int, \
  
-    # 'CREATE TABLE player_perspectives (\
-    #     id int PRIMARY KEY,\
-    #     name varchar(250) NOT NULL, \
-    #     UNIQUE (name))',
+        'CREATE TABLE player_perspectives (\
+        id int AUTO_INCREMENT PRIMARY KEY,\
+        name varchar(250) NOT NULL, \
+        UNIQUE (name))',
 
         'CREATE TABLE consoles (\
         id int AUTO_INCREMENT PRIMARY KEY, \
@@ -72,10 +74,10 @@ def create_tables(sql_conn):
         console_id INT NOT NULL references consoles(id), \
         PRIMARY KEY(game_id, console_id))',
 
-        # 'CREATE TABLE game_to_perspective (\
-        # game_id INT NOT NULL references games(id), \
-        # perspective_id INT NOT NULL references player_perspectives(id), \
-        # PRIMARY KEY(game_id, perspective_id))',
+        'CREATE TABLE game_to_perspective (\
+        game_id INT NOT NULL references games(id), \
+        perspective_id INT NOT NULL references player_perspectives(id), \
+        PRIMARY KEY(game_id, perspective_id))',
 
         'CREATE TABLE game_to_genre( \
         game_id INT NOT NULL references games(id), \

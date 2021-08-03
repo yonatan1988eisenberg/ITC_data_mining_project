@@ -11,14 +11,6 @@ def insert_row_to_database(data_dict, sql_conn):
     config_object = ConfigParser()
     config_object.read("config.ini")
 
-    # check if the game exists in the database
-
-    # Get API data
-    # franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, \
-    # player_perspectives_name_d = integrate_api(data_dict['name_of_game'])
-
-    console_id_list = [config_object['LIST_OF_DATA']['main platform']]
-
     #
     # Insert into publisher
     pub_id = insert_row_to_table(data_dict={'name': data_dict['publisher']}, table='publishers', unique_col='name',
@@ -31,32 +23,33 @@ def insert_row_to_database(data_dict, sql_conn):
     # Insert into age_rating
     ar_id = insert_row_to_table(data_dict={'name': data_dict['age_rating']}, table='age_ratings', unique_col='name',
                                 unique_val=data_dict['age_rating'], sql_conn=sql_conn)
-    # # Insert into franchise
-    # fr_id = insert_row_to_table(data_dict={'name': franchises_name_d}, table='franchises', unique_col='name',
-    #                             unique_val=franchises_name_d, sql_conn=sql_conn)
-    # # Insert into game_engine
-    # ge_id = insert_row_to_table(data_dict={'name': game_engines_name_d}, table='game_engines', unique_col='name',
-    #                             unique_val=game_engines_name_d, sql_conn=sql_conn)
+    # Insert into franchise
+    fr_id = insert_row_to_table(data_dict={'name': data_dict['franchises_name']}, table='franchises', unique_col='name',
+                                unique_val=data_dict['franchises_name'], sql_conn=sql_conn)
+    # Insert into game_engine
+    ge_id = insert_row_to_table(data_dict={'name': data_dict['game_engines_name']}, table='game_engines', unique_col='name',
+                                unique_val=data_dict['game_engines_name'], sql_conn=sql_conn)
 
     # insert into games
     game_id = insert_row_to_table(data_dict={'name': data_dict['name_of_game'],
                                              'publisher_id': pub_id,
                                              # 'developer_id': dev_id,
                                              'age_rating_id': ar_id,
-                                             # 'franchise_id': fr_id,
-                                             # 'game_engine_id': ge_id,
+                                             'franchise_id': fr_id,
+                                             'game_engine_id': ge_id,
                                              'num_players': data_dict['num_players'],
                                              'release_date': data_dict['release_date']},
                                   table='games', unique_col='name', unique_val=data_dict['name_of_game'],
                                   sql_conn=sql_conn)
 
-    # # Insert player_perspective
-    # pp_id = insert_row_to_table(data_dict={'name': player_perspectives_name_d}, table='player_perspectives',
-    #                             unique_col='name', unique_val=player_perspectives_name_d, sql_conn=sql_conn)
-    # #
-    # insert_row_game_to_x_table(ids_dict={'game_id': game_id,
-    #                                      'perspective_id': pp_id},
-    #                            table='game_to_perspective', sql_conn=sql_conn)
+    # Insert player_perspective
+    for perspectives in data_dict['player_perspectives_name']:
+        pp_id = insert_row_to_table(data_dict={'name': perspectives}, table='player_perspectives',
+                                    unique_col='name', unique_val=perspectives, sql_conn=sql_conn)
+        #
+        insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                             'perspective_id': pp_id},
+                                   table='game_to_perspective', sql_conn=sql_conn)
 
     # Insert values into consoles
     mc_id = insert_row_to_table(data_dict={'name': data_dict['main_platform']}, table='consoles', unique_col='name',

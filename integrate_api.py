@@ -11,9 +11,7 @@ def integrate_api(game):
     access_token = r.json()['access_token']
 
     # get game info
-    # '"Half-Life 2"'
     game = '"' + f'{game}' + '"'
-    release_date = 1428872400
 
     urlgame = 'https://api.igdb.com/v4/games'
 
@@ -79,6 +77,5 @@ def integrate_api(game):
             player_perspectives_name = None
 
     return franchise_num, game_eng_num, plr_prspctv_num, franchises_name, game_engines_name, player_perspectives_name
-
 
 
