@@ -4,40 +4,117 @@ import re
 from integrate_api import integrate_api
 from insert_row_to_table import insert_row_to_table
 from init_mysql_conn import sql_query
+from insert_row_game_to_x_table import insert_row_game_to_x_table
 
 
-def create_database(row_dict, sql_conn):
+def insert_row_to_database(data_dict, sql_conn):
     config_object = ConfigParser()
     config_object.read("config.ini")
 
+    # check if the game exists in the database
+
     # Get API data
-    franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, player_perspectives_name_d \
-        = integrate_api(row_dict['name_of_game'])
+    # franchise_num_d, game_eng_num_d, plr_prspctv_num_d, franchises_name_d, game_engines_name_d, \
+    # player_perspectives_name_d = integrate_api(data_dict['name_of_game'])
 
     console_id_list = [config_object['LIST_OF_DATA']['main platform']]
 
-    sql_query(sql_conn, 'USE metacritic_db;')
-    # Insert Publisher
-    insert_row_to_table(data={'name': row_dict['publisher']}, table='publishers', unique_col='name',
-                        unique_val=row_dict['publisher'], sql_conn=sql_conn)
+    #
+    # Insert into publisher
+    pub_id = insert_row_to_table(data_dict={'name': data_dict['publisher']}, table='publishers', unique_col='name',
+                                 unique_val=data_dict['publisher'], sql_conn=sql_conn)
 
-    # Insert Developer
-    insert_row_to_table(data={'name': row_dict['developer']}, table='developer', unique_col='name',
-                        unique_val=row_dict['developer'], sql_conn=sql_conn)
+    # Insert into developer
+    dev_id = insert_row_to_table(data_dict={'name': data_dict['developer']}, table='developers', unique_col='name',
+                                 unique_val=data_dict['developer'], sql_conn=sql_conn)
 
-    # Insert Age_Rating
-    insert_row_to_table(data={'name': row_dict['age_rating']}, table='age_rating', unique_col='name',
-                        unique_val=row_dict['age_rating'], sql_conn=sql_conn)
+    # Insert into age_rating
+    ar_id = insert_row_to_table(data_dict={'name': data_dict['age_rating']}, table='age_ratings', unique_col='name',
+                                unique_val=data_dict['age_rating'], sql_conn=sql_conn)
+    # # Insert into franchise
+    # fr_id = insert_row_to_table(data_dict={'name': franchises_name_d}, table='franchises', unique_col='name',
+    #                             unique_val=franchises_name_d, sql_conn=sql_conn)
+    # # Insert into game_engine
+    # ge_id = insert_row_to_table(data_dict={'name': game_engines_name_d}, table='game_engines', unique_col='name',
+    #                             unique_val=game_engines_name_d, sql_conn=sql_conn)
 
-    # Insert Franchise
-    insert_row_to_table(data={'id': franchise_num_d, 'name': franchises_name_d}, table='franchise', unique_col='name',
-                        unique_val=franchises_name_d, sql_conn=sql_conn)
-    sql_conn.commit()
-    # Insert Game_Engine
-    # Insert player_perspective
-    # todo: insert all of them
+    # insert into games
+    game_id = insert_row_to_table(data_dict={'name': data_dict['name_of_game'],
+                                             'publisher_id': pub_id,
+                                             # 'developer_id': dev_id,
+                                             'age_rating_id': ar_id,
+                                             # 'franchise_id': fr_id,
+                                             # 'game_engine_id': ge_id,
+                                             'num_players': data_dict['num_players'],
+                                             'release_date': data_dict['release_date']},
+                                  table='games', unique_col='name', unique_val=data_dict['name_of_game'],
+                                  sql_conn=sql_conn)
 
-    # Insert values into Consoles
+    # # Insert player_perspective
+    # pp_id = insert_row_to_table(data_dict={'name': player_perspectives_name_d}, table='player_perspectives',
+    #                             unique_col='name', unique_val=player_perspectives_name_d, sql_conn=sql_conn)
+    # #
+    # insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+    #                                      'perspective_id': pp_id},
+    #                            table='game_to_perspective', sql_conn=sql_conn)
+
+    # Insert values into consoles
+    mc_id = insert_row_to_table(data_dict={'name': data_dict['main_platform']}, table='consoles', unique_col='name',
+                                unique_val=data_dict['main_platform'], sql_conn=sql_conn)
+    insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                         'console_id': mc_id},
+                               table='game_to_console', sql_conn=sql_conn)
+
+    for console in data_dict['other_consoles']:
+        console_id = insert_row_to_table(data_dict={'name': console}, table='consoles',
+                                         unique_col='name', unique_val=console, sql_conn=sql_conn)
+
+        insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                             'console_id': console_id},
+                                   table='game_to_console', sql_conn=sql_conn)
+
+    # # Insert Value into genres
+    for genre in data_dict['genres']:
+        genre_id = insert_row_to_table(data_dict={'name': genre}, table='genres', unique_col='name',
+                                       unique_val=genre, sql_conn=sql_conn)
+        insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                             'genre_id': genre_id},
+                                   table='game_to_genre', sql_conn=sql_conn)
+
+    # Insert Values into main_scores
+    ms_id = insert_row_game_to_x_table(data_dict={'game_id': game_id,
+                                                  'console_id': mc_id,
+                                                  'metascore': data_dict['metascore'],
+                                                  'userscore': data_dict['user_score'],
+                                                  'num_metascore': data_dict['number_of_metascore_reviewers'],
+                                                  'num_userscore': data_dict['number_of_user_reviews']},
+                                       ids_dict={'game_id': game_id, 'console_id': mc_id},
+                                       table='main_scores', sql_conn=sql_conn)
+
+    # Insert Values into PMN_user_scores
+    pmn_us_id = insert_row_to_table(data_dict={'game_id': game_id,
+                                               'num_positive': data_dict['user_review_positive'],
+                                               'num_mixed': data_dict['user_review_mixed'],
+                                               'num_negative': data_dict['user_review_negative']},
+                                    table='PMN_user_scores', unique_col='game_id',
+                                    unique_val=game_id, sql_conn=sql_conn)
+
+    # Insert Values into PMN_critic_scores
+    pmn_cs_id = insert_row_to_table(data_dict={'game_id': game_id,
+                                               'num_positive': data_dict['critic_review_positive'],
+                                               'num_mixed': data_dict['critic_review_mixed'],
+                                               'num_negative': data_dict['critic_review_negative']},
+                                    table='PMN_critic_scores', unique_col='game_id',
+                                    unique_val=game_id, sql_conn=sql_conn)
+    # insert into game_to_developer
+    insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                         'developer_id': dev_id},
+                               table='game_to_developer', sql_conn=sql_conn)
+
+    return 1
+    # todo: make the API integration work
+    # todo: seperate scores by consoles
+    # todo implement logger
 
     # full_list_of_consoles = []
     # full_list_of_consoles.append(list_of_data[int(config_object['LIST_OF_DATA']['main platform'])])
@@ -54,6 +131,7 @@ def create_database(row_dict, sql_conn):
     #         pass
 
     # Insert Value into Genre
+
     """
     if list_of_data[int(config_object['LIST_OF_DATA']['publisher'])] == None:
         pub_id = None

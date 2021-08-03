@@ -24,10 +24,10 @@ def sql_query(connection, query, holders=None):
     :param connection: an initialized mysql local connection
     :param query: the sql query
     :param holders: placeholders values, default is None
-    :return: the query return value
+    :return: the query return value and last row id
     """
 
     with connection.cursor() as cursor:
-        cursor.execute(query, args=holders)
+        cursor.execute(query, holders)
         res = cursor.fetchall()
         return res
