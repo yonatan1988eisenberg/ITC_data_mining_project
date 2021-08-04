@@ -13,7 +13,8 @@ config_object = ConfigParser()
 config_object.read("config.ini")
 
 
-def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
+
+def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger):
     """
     This function gets a soup and a url to a search page and fetch the first num_of_articles_to_fetch from
     it into a csv file
@@ -21,9 +22,10 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
     """
 
     db_name = "metacritic_db"
+    logger.info('fetching the articles')
     articles_fetched = 0
     # initialize mysql connection
-    password = 'Weasil123' #input('please enter mysql password:')
+    password = 'pnmqcX78k' #input('please enter mysql password:')
     sql_conn = init_mysql_conn(password=password)
     # check if the database already exists. If not, create it and the tables
     # sql_query(sql_conn, 'DROP DATABASE metacritic_db')
@@ -39,8 +41,8 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
         # while we haven't fetch enough articles, find all the articles in the page
         while articles_fetched < num_of_articles_to_fetch:
             articles = search_soup.find_all('td', class_='clamp-summary-wrap')
-                # for every article in the page, get its url and send to the function which scrape the data from it
-                # and than update counter etc
+            # for every article in the page, get its url and send to the function which scrape the data from it
+            # and than update counter etc
             for article in articles:
                 article_url = article.find('a', class_='title')
                 article_url = article_url.get('href')
@@ -53,7 +55,8 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
                 pbar.update()
                 if articles_fetched == num_of_articles_to_fetch:
                     print("done!, you can find your data in your Data Base")
-                    return
+                    logger.info('fetched the articles')
+                    return num_of_articles_to_fetch
             # if we finished the page but need more articles, go to the next page
             pages = search_soup.find('ul', class_="pages")
             pages = pages.find_all('li')
@@ -63,4 +66,5 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch):
             search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
 
     print("error scraping!")
+    logger.warning('encountered error while fetching articles')
     return

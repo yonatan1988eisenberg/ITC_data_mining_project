@@ -81,3 +81,6 @@ temp files/
 .gitignore
 .idea/misc.xml
 .gitignore
+.idea/
+__pycache__/
+

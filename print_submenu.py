@@ -5,6 +5,7 @@ from configparser import ConfigParser
 config_object = ConfigParser()
 config_object.read("config.ini")
 
+
 def print_submenu(string_list):
     """
     This function prints a list and asks the user to choose one, it than verifies the input (via check_input function)
