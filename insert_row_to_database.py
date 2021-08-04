@@ -43,13 +43,17 @@ def insert_row_to_database(data_dict, sql_conn):
                                   sql_conn=sql_conn)
 
     # Insert player_perspective
-    for perspectives in data_dict['player_perspectives_name']:
-        pp_id = insert_row_to_table(data_dict={'name': perspectives}, table='player_perspectives',
-                                    unique_col='name', unique_val=perspectives, sql_conn=sql_conn)
-        #
-        insert_row_game_to_x_table(ids_dict={'game_id': game_id,
-                                             'perspective_id': pp_id},
-                                   table='game_to_perspective', sql_conn=sql_conn)
+    if data_dict['player_perspectives_name'] == None:
+        pp_id = insert_row_to_table(data_dict={'name': data_dict['player_perspectives_name']}, table='player_perspectives',
+                                    unique_col='name', unique_val=data_dict['player_perspectives_name'], sql_conn=sql_conn)
+    else:
+        for perspectives in data_dict['player_perspectives_name']:
+            pp_id = insert_row_to_table(data_dict={'name': perspectives}, table='player_perspectives',
+                                        unique_col='name', unique_val=perspectives, sql_conn=sql_conn)
+            #
+            insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+                                                 'perspective_id': pp_id},
+                                       table='game_to_perspective', sql_conn=sql_conn)
 
     # Insert values into consoles
     mc_id = insert_row_to_table(data_dict={'name': data_dict['main_platform']}, table='consoles', unique_col='name',
