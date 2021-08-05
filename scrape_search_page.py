@@ -1,6 +1,6 @@
 from http_to_soup import http_to_soup
 from tqdm import tqdm
-from final_data_scrape import scrape_data
+from scrape_game_page import scrape_game_page
 from configparser import ConfigParser
 from insert_row_to_database import insert_row_to_database
 from init_mysql_conn import init_mysql_conn, sql_query
@@ -8,10 +8,10 @@ import getpass
 from create_tables import create_tables
 from insert_row_to_table import insert_row_to_table
 import csv
+from update_twitch_header import update_twitch_header
 
 config_object = ConfigParser()
 config_object.read("config.ini")
-
 
 
 def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger):
@@ -21,6 +21,7 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger
     :return: True if successful, otherwise False
     """
 
+    api_header = update_twitch_header()
     db_name = "metacritic_db"
     logger.info('fetching the articles')
     articles_fetched = 0
@@ -47,9 +48,8 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger
                 article_url = article.find('a', class_='title')
                 article_url = article_url.get('href')
                 article_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + article_url)
-                # insert_row_to_table(scrape_data(article_soup))
-                data_dict = scrape_data(article_soup)
-                # todo implement a function which scrapes the data from the API and adds it to data_dict
+                # insert_row_to_table(get_game_api_data(article_soup))
+                data_dict = scrape_game_page(article_soup, api_header)
                 # insert_row_to_database(data_dict, sql_conn)
                 articles_fetched += insert_row_to_database(data_dict, sql_conn)
                 pbar.update()

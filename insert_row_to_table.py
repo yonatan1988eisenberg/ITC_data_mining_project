@@ -1,7 +1,7 @@
 import pymysql
 from configparser import ConfigParser
 import re
-from integrate_api import integrate_api
+from get_game_api_data import get_game_api_data
 from init_mysql_conn import sql_query
 
 

@@ -1,7 +1,7 @@
 import pymysql
 from configparser import ConfigParser
 import re
-from integrate_api import integrate_api
+from get_game_api_data import get_game_api_data
 from insert_row_to_table import insert_row_to_table
 from init_mysql_conn import sql_query
 from insert_row_game_to_x_table import insert_row_game_to_x_table
@@ -24,11 +24,11 @@ def insert_row_to_database(data_dict, sql_conn):
     ar_id = insert_row_to_table(data_dict={'name': data_dict['age_rating']}, table='age_ratings', unique_col='name',
                                 unique_val=data_dict['age_rating'], sql_conn=sql_conn)
     # Insert into franchise
-    fr_id = insert_row_to_table(data_dict={'name': data_dict['franchises_name']}, table='franchises', unique_col='name',
-                                unique_val=data_dict['franchises_name'], sql_conn=sql_conn)
+    fr_id = insert_row_to_table(data_dict={'name': data_dict['franchises']}, table='franchises', unique_col='name',
+                                unique_val=data_dict['franchises'], sql_conn=sql_conn)
     # Insert into game_engine
-    ge_id = insert_row_to_table(data_dict={'name': data_dict['game_engines_name']}, table='game_engines', unique_col='name',
-                                unique_val=data_dict['game_engines_name'], sql_conn=sql_conn)
+    ge_id = insert_row_to_table(data_dict={'name': data_dict['game_engines']}, table='game_engines', unique_col='name',
+                                unique_val=data_dict['game_engines'], sql_conn=sql_conn)
 
     # insert into games
     game_id = insert_row_to_table(data_dict={'name': data_dict['name_of_game'],
@@ -43,11 +43,12 @@ def insert_row_to_database(data_dict, sql_conn):
                                   sql_conn=sql_conn)
 
     # Insert player_perspective
-    if data_dict['player_perspectives_name'] == None:
-        pp_id = insert_row_to_table(data_dict={'name': data_dict['player_perspectives_name']}, table='player_perspectives',
-                                    unique_col='name', unique_val=data_dict['player_perspectives_name'], sql_conn=sql_conn)
+    if data_dict['player_perspectives'] is None:
+        pp_id = insert_row_to_table(data_dict={'name': data_dict['player_perspectives']},
+                                    table='player_perspectives', unique_col='name',
+                                    unique_val=data_dict['player_perspectives'], sql_conn=sql_conn)
     else:
-        for perspectives in data_dict['player_perspectives_name']:
+        for perspectives in data_dict['player_perspectives']:
             pp_id = insert_row_to_table(data_dict={'name': perspectives}, table='player_perspectives',
                                         unique_col='name', unique_val=perspectives, sql_conn=sql_conn)
             #
@@ -110,7 +111,7 @@ def insert_row_to_database(data_dict, sql_conn):
 
     return 1
     # todo: make the API integration work
-    # todo: seperate scores by consoles
+    # todo: separate scores by consoles
     # todo implement logger
 
     # full_list_of_consoles = []
