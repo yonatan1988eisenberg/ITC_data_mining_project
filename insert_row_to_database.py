@@ -1,6 +1,5 @@
 from configparser import ConfigParser
 from insert_row_to_table import insert_row_to_table
-from insert_row_game_to_x_table import insert_row_game_to_x_table
 
 # todo: arrange nicley, split into functions
 
@@ -16,37 +15,37 @@ def insert_row_to_database(data_dict, sql_conn):
     #
     # Insert into publisher
     if 'publisher' in data_dict.keys():
-        pub_id = insert_row_to_table(data_dict={'name': data_dict['publisher']}, table='publishers', unique_col='name',
-                                     unique_val=data_dict['publisher'], sql_conn=sql_conn)
+        pub_id = insert_row_to_table(ids_dict={'name': data_dict['publisher']}, table='publishers',
+                                     sql_conn=sql_conn)
 
     # Insert into age_rating
     if 'age_rating' in data_dict.keys():
-        ar_id = insert_row_to_table(data_dict={'name': data_dict['age_rating']}, table='age_ratings', unique_col='name',
-                                    unique_val=data_dict['age_rating'], sql_conn=sql_conn)
+        ar_id = insert_row_to_table(ids_dict={'name': data_dict['age_rating']}, table='age_ratings',
+                                    sql_conn=sql_conn)
     # Insert into franchise
     if 'franchises' in data_dict.keys():
-        fr_id = insert_row_to_table(data_dict={'name': data_dict['franchises']}, table='franchises', unique_col='name',
-                                    unique_val=data_dict['franchises'], sql_conn=sql_conn)
+        fr_id = insert_row_to_table(ids_dict={'name': data_dict['franchises']}, table='franchises',
+                                    sql_conn=sql_conn)
     # Insert into game_engine
     if 'game_engines' in data_dict.keys():
-        ge_id = insert_row_to_table(data_dict={'name': data_dict['game_engines']}, table='game_engines',
-                                    unique_col='name', unique_val=data_dict['game_engines'], sql_conn=sql_conn)
+        ge_id = insert_row_to_table(ids_dict={'name': data_dict['game_engines']}, table='game_engines',
+                                    sql_conn=sql_conn)
     # Insert into player perspective
     if 'player_perspectives' in data_dict.keys():
-        pp_id = insert_row_to_table(data_dict={'name': data_dict['player_perspectives']}, table='player_perspectives',
-                                    unique_col='name', unique_val=data_dict['player_perspectives'], sql_conn=sql_conn)
+        pp_id = insert_row_to_table(ids_dict={'name': data_dict['player_perspectives']},
+                                    table='player_perspectives', sql_conn=sql_conn)
 
     # insert into games
-    game_id = insert_row_to_table(data_dict={'name': data_dict['name_of_game'],
-                                             'publisher_id': pub_id,
-                                             'age_rating_id': ar_id,
-                                             'franchise_id': fr_id,
-                                             'game_engine_id': ge_id,
-                                             'perspective_id': pp_id,
-                                             'num_players': data_dict['num_players'],
-                                             'release_date': data_dict['release_date']},
-                                  table='games', unique_col='name', unique_val=data_dict['name_of_game'],
-                                  sql_conn=sql_conn)
+    game_id = insert_row_to_table(ids_dict={'name': data_dict['name_of_game']},
+                                  data_dict={'name': data_dict['name_of_game'],
+                                                    'publisher_id': pub_id,
+                                                    'age_rating_id': ar_id,
+                                                    'franchise_id': fr_id,
+                                                    'game_engine_id': ge_id,
+                                                    'perspective_id': pp_id,
+                                                    'num_players': data_dict['num_players'],
+                                                    'release_date': data_dict['release_date']},
+                                  table='games', sql_conn=sql_conn)
 
     #
     # else:
@@ -68,40 +67,40 @@ def insert_row_to_database(data_dict, sql_conn):
                                        'critic_review_negative', 'developer']) - set(data.keys()))
             for col in missing_scores:
                 data[col] = None
-            console_id = insert_row_to_table(data_dict={'name': console}, table='consoles',
-                                             unique_col='name', unique_val=console, sql_conn=sql_conn)
+            console_id = insert_row_to_table(ids_dict={'name': console}, table='consoles',
+                                             sql_conn=sql_conn)
 
-            insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+            insert_row_to_table(ids_dict={'game_id': game_id,
                                                  'console_id': console_id},
-                                       table='game_to_console', sql_conn=sql_conn)
+                                table='game_to_console', sql_conn=sql_conn)
             # insert scores values
-            insert_row_game_to_x_table(data_dict={'game_id': game_id,
+            insert_row_to_table(data_dict={'game_id': game_id,
                                                   'console_id': console_id,
                                                   'metascore': data['metascore'],
                                                   'userscore': data['user_score'],
                                                   'num_metascore': data['number_of_metascore_reviewers'],
                                                   'num_userscore': data['number_of_user_reviews']},
-                                       ids_dict={'game_id': game_id, 'console_id': console_id},
-                                       table='main_scores', sql_conn=sql_conn)
+                                ids_dict={'game_id': game_id, 'console_id': console_id},
+                                table='main_scores', sql_conn=sql_conn)
 
-            pmn_us_id = insert_row_game_to_x_table(data_dict={'game_id': game_id,
+            pmn_us_id = insert_row_to_table(data_dict={'game_id': game_id,
                                                               'console_id': console_id,
                                                               'num_positive': data['user_review_positive'],
                                                               'num_mixed': data['user_review_mixed'],
                                                               'num_negative': data['user_review_negative']},
-                                                   table='PMN_user_scores', ids_dict={'game_id': game_id,
+                                            table='PMN_user_scores', ids_dict={'game_id': game_id,
                                                                                       'console_id': console_id},
-                                                   sql_conn=sql_conn)
+                                            sql_conn=sql_conn)
 
             # Insert Values into PMN_critic_scores
-            pmn_cs_id = insert_row_game_to_x_table(data_dict={'game_id': game_id,
+            pmn_cs_id = insert_row_to_table(data_dict={'game_id': game_id,
                                                               'console_id': console_id,
                                                               'num_positive': data['critic_review_positive'],
                                                               'num_mixed': data['critic_review_mixed'],
                                                               'num_negative': data['critic_review_negative']},
-                                                   table='PMN_critic_scores', ids_dict={'game_id': game_id,
+                                            table='PMN_critic_scores', ids_dict={'game_id': game_id,
                                                                                         'console_id': console_id},
-                                                   sql_conn=sql_conn)
+                                            sql_conn=sql_conn)
             # Insert Values into main_scores
             # ms_id = insert_row_game_to_x_table(data_dict={'game_id': game_id,
             #                                               'console_id': console_id,
@@ -113,21 +112,21 @@ def insert_row_to_database(data_dict, sql_conn):
             #                                    table='main_scores', sql_conn=sql_conn)
 
             # insert into developers
-            dev_id = insert_row_game_to_x_table(ids_dict={'name': data['developer']}, table='developers',
-                                                sql_conn=sql_conn)
+            dev_id = insert_row_to_table(ids_dict={'name': data['developer']}, table='developers',
+                                         sql_conn=sql_conn)
 
-            res = insert_row_game_to_x_table(ids_dict={'game_id': game_id, 'developer_id': dev_id,
+            res = insert_row_to_table(ids_dict={'game_id': game_id, 'developer_id': dev_id,
                                                        'console_id': console_id}, table='game_to_developer',
-                                             sql_conn=sql_conn)
+                                      sql_conn=sql_conn)
 
     # # Insert Value into genres
     if 'genres' in data_dict.keys():
         for genre in data_dict['genres']:
-            genre_id = insert_row_to_table(data_dict={'name': genre}, table='genres', unique_col='name',
-                                           unique_val=genre, sql_conn=sql_conn)
-            insert_row_game_to_x_table(ids_dict={'game_id': game_id,
+            genre_id = insert_row_to_table(ids_dict={'name': genre}, table='genres',
+                                           sql_conn=sql_conn)
+            insert_row_to_table(ids_dict={'game_id': game_id,
                                                  'genre_id': genre_id},
-                                       table='game_to_genre', sql_conn=sql_conn)
+                                table='game_to_genre', sql_conn=sql_conn)
 
 
 
