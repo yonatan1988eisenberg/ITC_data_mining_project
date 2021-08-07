@@ -13,6 +13,7 @@ config_object.read("config.ini")
 # todo: split main into functions
 # todo: implement the logger in more places. add all kinds of massages
 # todo: multi-threading!
+# todo: combine functions into files to reduce the number of files
 
 
 def main():
