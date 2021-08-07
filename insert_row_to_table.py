@@ -19,7 +19,6 @@ def insert_row_to_table(data_dict, table, unique_col, unique_val, sql_conn):
     if unique_val is None:
         return None
     if isinstance(unique_col, list):
-
         query_where = "".join([f'CAST({col} as CHAR) LIKE %s AND ' for col in unique_col ])[:-5]# if col is not None
     else:
         query_where = f'CAST({unique_col} as CHAR) LIKE %s'

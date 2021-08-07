@@ -25,15 +25,7 @@ def get_game_api_data(game, api_header):
     game_data = requests.post(url_game, headers=api_header, data=query)
     # if exists: r3.json() = [{'id': 1029, 'franchises': [596], 'game_engines': [1051],
     #                          'name': 'The Legend of Zelda: Ocarina of Time', 'player_perspectives': [2]}]
-    if not game_data.json():
-        return {}
-        # franchise_num = None
-        # game_eng_num = None
-        # plr_prspctv_num = None
-        # franchises_name = None
-        # game_engines_name = None
-        # player_perspectives_name = None
-    else:
+    if game_data.json():
         # return game_data.json()[0]
         for col in ['franchises', 'game_engines', 'player_perspectives']:
             if col in set(game_data.json()[0].keys()):

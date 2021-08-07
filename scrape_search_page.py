@@ -58,11 +58,9 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger
                     logger.info('fetched the articles')
                     return num_of_articles_to_fetch
             # if we finished the page but need more articles, go to the next page
-            pages = search_soup.find('ul', class_="pages")
-            pages = pages.find_all('li')
-            for j in range(len(pages) - 1):
-                if pages[j].a is None:
-                    next_page = pages[j + 1].a.get("href")
+            pages = search_soup.find('span', class_="flipper next")
+            if pages:
+                next_page = pages.a.get('href')
             search_soup = http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + next_page)
 
     print("error scraping!")

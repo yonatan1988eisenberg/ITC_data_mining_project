@@ -2,7 +2,7 @@ from configparser import ConfigParser
 
 # Get the configparser object
 config_object = ConfigParser()
-
+# todo: arrange to config writer according to type of data (urls, constants..) and not according to function
 config_object['USER_QUESTIONS'] = {
     "DOMAIN_URL": "https://www.metacritic.com",
     "GAMES_URL": "/game",

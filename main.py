@@ -10,11 +10,12 @@ from get_search_soup_and_url import get_search_soup_and_url
 
 config_object = ConfigParser()
 config_object.read("config.ini")
+# todo: split main into functions
 
 
 def main():
     """
-    The main function get the parsed args and runs the program manually\automatically
+    The main function calls all the functions needed to run this program.
     """
 
     # config logger
@@ -46,6 +47,7 @@ def main():
         exit()
 
     # check for the number of available games
+    # todo: check what happens if -f is larger than available games
     try:
         num_of_articles_found = get_num_of_articles_from_soup(search_soup, logger)
     except UnboundLocalError as er:

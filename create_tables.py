@@ -1,13 +1,7 @@
-import pymysql
-from configparser import ConfigParser
-import re
-from get_game_api_data import get_game_api_data
 from init_mysql_conn import sql_query
 
-config_object = ConfigParser()
-config_object.read("config.ini")
 
-
+# todo: arrange nicely, enter tables_creation_queries into the config file
 def create_tables(sql_conn):
 
     tables_creation_queries = [
@@ -36,6 +30,11 @@ def create_tables(sql_conn):
         name varchar(250) NOT NULL, \
         UNIQUE (name))',
 
+        'CREATE TABLE player_perspectives (\
+        id int AUTO_INCREMENT PRIMARY KEY,\
+        name varchar(250) NOT NULL, \
+        UNIQUE (name))',
+
         'CREATE TABLE games(\
         id int AUTO_INCREMENT PRIMARY KEY, \
         name varchar(250) UNIQUE, \
@@ -45,7 +44,11 @@ def create_tables(sql_conn):
         game_engine_id int, \
         num_players varchar(250), \
         release_date varchar(250), \
+        perspective_id int, \
         FOREIGN KEY(publisher_id) REFERENCES publishers(id), \
+        FOREIGN KEY(perspective_id) REFERENCES player_perspectives(id), \
+        FOREIGN KEY(franchise_id) REFERENCES franchises(id), \
+        FOREIGN KEY(game_engine_id) REFERENCES game_engines(id), \
         FOREIGN KEY(age_rating_id) REFERENCES age_ratings(id))',
         # developer_id int, \
         # FOREIGN KEY(developer_id) REFERENCES developers(id), \
@@ -54,10 +57,7 @@ def create_tables(sql_conn):
         # franchise_id int, \
         # game_engine_id int, \
  
-        'CREATE TABLE player_perspectives (\
-        id int AUTO_INCREMENT PRIMARY KEY,\
-        name varchar(250) NOT NULL, \
-        UNIQUE (name))',
+
 
         'CREATE TABLE consoles (\
         id int AUTO_INCREMENT PRIMARY KEY, \
@@ -65,7 +65,7 @@ def create_tables(sql_conn):
         UNIQUE (name))',
 
         'CREATE TABLE genres (\
-        id int AUTO_INCREMENT PRIMARY KEY,\
+        id int AUTO_INCREMENT PRIMARY KEY, \
         name varchar(250) NOT NULL, \
         UNIQUE (name))',
 
@@ -74,10 +74,10 @@ def create_tables(sql_conn):
         console_id INT NOT NULL references consoles(id), \
         PRIMARY KEY(game_id, console_id))',
 
-        'CREATE TABLE game_to_perspective (\
-        game_id INT NOT NULL references games(id), \
-        perspective_id INT NOT NULL references player_perspectives(id), \
-        PRIMARY KEY(game_id, perspective_id))',
+        # 'CREATE TABLE game_to_perspective (\
+        # game_id INT NOT NULL references games(id), \
+        # perspective_id INT NOT NULL references player_perspectives(id), \
+        # PRIMARY KEY(game_id, perspective_id))',
 
         'CREATE TABLE game_to_genre( \
         game_id INT NOT NULL references games(id), \
@@ -87,7 +87,8 @@ def create_tables(sql_conn):
         'CREATE TABLE game_to_developer( \
         game_id INT NOT NULL references games(id), \
         developer_id INT NOT NULL references developers(id), \
-        PRIMARY KEY(game_id, developer_id))',
+        console_id INT NOT NULL references consoles(id), \
+        PRIMARY KEY(game_id, developer_id, console_id))',
 
         'CREATE TABLE main_scores( \
         game_id int, \
@@ -101,6 +102,7 @@ def create_tables(sql_conn):
 
         'CREATE TABLE PMN_user_scores( \
         game_id int, \
+        console_id int, \
         num_positive varchar(250), \
         num_mixed varchar(250), \
         num_negative varchar(250), \
@@ -108,10 +110,13 @@ def create_tables(sql_conn):
 
         'CREATE TABLE PMN_critic_scores( \
         game_id int, \
+        console_id int, \
         num_positive varchar(250), \
         num_mixed varchar(250), \
         num_negative varchar(250), \
         FOREIGN KEY(game_id) REFERENCES games(id))'
+
+
     ]
     """
     'CREATE TABLE publishers (\
@@ -171,10 +176,10 @@ def create_tables(sql_conn):
     console_id INT NOT NULL references consoles(id), \
     PRIMARY KEY(game_id, console_id))',
 
-    'CREATE TABLE game_to_perspective (\
-    game_id INT NOT NULL references games(id), \
-    perspective_id INT NOT NULL references player_perspectives(id), \
-    PRIMARY KEY(game_id, perspective_id))',
+    # 'CREATE TABLE game_to_perspective (\
+    # game_id INT NOT NULL references games(id), \
+    # perspective_id INT NOT NULL references player_perspectives(id), \
+    # PRIMARY KEY(game_id, perspective_id))',
 
     'CREATE TABLE game_to_genre( \
     game_id INT NOT NULL references games(id), \

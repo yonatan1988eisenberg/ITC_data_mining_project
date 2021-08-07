@@ -10,10 +10,11 @@ def asc_and_fetch_event(args, search_soup, search_url, num_of_articles_found, lo
     """
     In the case the search results can be oreder by ascending order, this function will prompt the question to the uses
     (in menual mode) or use the arg in (in CLI mode) to determine if it should be done (and updates search soup and url)
-    :param args: the input argumnets (CLI mode)
+    :param args: the input arguments (CLI mode)
     :param search_soup: the current search soup
     :param search_url: the current search url
     :param num_of_articles_found: the maximum num of article to fetch
+    :param logger: a handle to the program's logger
     :return: updated search soup and url and the number or article to fetch
     """
     logger.info('fetching the number of available to fetch')
