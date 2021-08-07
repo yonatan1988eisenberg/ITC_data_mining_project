@@ -27,7 +27,8 @@ def get_consoles_and_scores(soup):
         for console in other_consoles:
             name = console.text
             url = console.get('href')
-            data_dict['consoles'][name] = get_scores_and_dev_from_soup(http_to_soup(config_object['USER_QUESTIONS']['DOMAIN_URL'] + url))
+            data_dict['consoles'][name] = get_scores_and_dev_from_soup(http_to_soup(
+                config_object['USER_QUESTIONS']['DOMAIN_URL'] + url))
 
     return data_dict
 

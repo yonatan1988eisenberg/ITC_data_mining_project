@@ -1,9 +1,6 @@
-import pymysql
-from configparser import ConfigParser
-import re
-from get_game_api_data import get_game_api_data
 from init_mysql_conn import sql_query
 
+# todo: check "insert_row_into_game_to_x_table" function
 
 def insert_row_to_table(data_dict, table, unique_col, unique_val, sql_conn):
     """
@@ -19,7 +16,7 @@ def insert_row_to_table(data_dict, table, unique_col, unique_val, sql_conn):
     if unique_val is None:
         return None
     if isinstance(unique_col, list):
-        query_where = "".join([f'CAST({col} as CHAR) LIKE %s AND ' for col in unique_col ])[:-5]# if col is not None
+        query_where = "".join([f'CAST({col} as CHAR) LIKE %s AND ' for col in unique_col])[:-5]
     else:
         query_where = f'CAST({unique_col} as CHAR) LIKE %s'
 

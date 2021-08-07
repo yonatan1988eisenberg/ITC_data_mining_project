@@ -14,6 +14,7 @@ def main_menu_event(soup, search_url, header, options_class, case, search_code=N
     :param header: the object type we're looking for
     :param options_class: the object class we're looking for
     :param case: a flag allowing the function to deal with both platforms and genre main menu choices
+    :param search_code: the search code for the search page, if provided
     :return: updated soup and url
     """
 

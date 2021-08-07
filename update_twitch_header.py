@@ -2,7 +2,11 @@ import requests
 
 
 def update_twitch_header():
-    # twitch token get
+    """
+    This function gets the twitch token and integrates its into the header which it returns
+    """
+
+    # get twitch token
     twitch_url = 'https://id.twitch.tv/oauth2/token'
     twitch_header = {'client_id': 'a146740t3ncae5ov0u7pjwwl12zrpm',
                      'client_secret': 'rai1tprpb8cgc81ty05moimuk2fneo',

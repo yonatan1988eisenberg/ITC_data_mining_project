@@ -6,6 +6,8 @@ import re
 from get_game_api_data import get_game_api_data
 from init_mysql_conn import sql_query
 
+# todo: arrange nicely, consider deleting the function "insert_row_to_table" and reroute here
+
 
 def insert_row_game_to_x_table(ids_dict, table, sql_conn, data_dict=None):
     """

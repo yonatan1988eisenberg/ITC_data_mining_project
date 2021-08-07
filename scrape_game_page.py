@@ -2,6 +2,8 @@ from get_game_api_data import get_game_api_data
 from get_consoles_and_scores import get_consoles_and_scores
 from get_soup_general_data import get_soup_general_data
 
+# todo: arrange nicely
+
 
 def scrape_game_page(soup, api_header):
     """
@@ -136,7 +138,6 @@ def scrape_game_page(soup, api_header):
 #             'user_review_mixed',
 #             'user_review_negative'
 #             ]
-#     # todo: critic/user reviews are not assigning the right values!!!
 #     """
 #     for unchecked in list_of_scrape_unchecked:
 #         if isinstance(unchecked, list):

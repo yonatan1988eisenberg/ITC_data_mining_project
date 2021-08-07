@@ -1,6 +1,8 @@
 import requests
 from fetch_api_val import fetch_api_val
 
+# todo: arrange nicely.
+
 
 def get_game_api_data(game, api_header):
 

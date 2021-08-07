@@ -8,6 +8,7 @@ def get_search_soup_and_url(search_code, user_menu, logger):
     This fucntion prompt the user for the ssearch parameters (manual mode) and sends the search code (CLI mode)
     :param search_code: the input search code (=None if manual mode)
     :param user_menu: the chosen menu option (manual mode)
+    :param logger: a handle to the program's logger
     :return: the search soup and url
     """
 

@@ -11,7 +11,6 @@ def time_frame_event(search_code):
     This function prints to the user the available time frames to search for and allows the user to choose one.
     It then prompt available years, platforms and sort options for the user to choose.
     :return: a soup object and its url pointing to the relevant search page on metacritic.com
-    :return:
     """
     # (search page)
     search_url = config_object['USER_QUESTIONS']['DOMAIN_URL'] + config_object['TIMEFRAME']['TIME_FRAME_URL']

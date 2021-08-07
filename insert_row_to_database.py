@@ -1,10 +1,8 @@
-import pymysql
 from configparser import ConfigParser
-import re
-from get_game_api_data import get_game_api_data
 from insert_row_to_table import insert_row_to_table
-from init_mysql_conn import sql_query
 from insert_row_game_to_x_table import insert_row_game_to_x_table
+
+# todo: arrange nicley, split into functions
 
 
 def insert_row_to_database(data_dict, sql_conn):
@@ -59,7 +57,6 @@ def insert_row_to_database(data_dict, sql_conn):
     #         insert_row_game_to_x_table(ids_dict={'game_id': game_id,
     #                                              'perspective_id': pp_id},
     #                                    table='game_to_perspective', sql_conn=sql_conn)
-
 
     # Insert values into consoles
     if 'consoles' in data_dict.keys():

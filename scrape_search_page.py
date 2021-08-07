@@ -4,21 +4,21 @@ from scrape_game_page import scrape_game_page
 from configparser import ConfigParser
 from insert_row_to_database import insert_row_to_database
 from init_mysql_conn import init_mysql_conn, sql_query
-import getpass
 from create_tables import create_tables
-from insert_row_to_table import insert_row_to_table
-import csv
 from update_twitch_header import update_twitch_header
 
 config_object = ConfigParser()
 config_object.read("config.ini")
+# todo: implement multi-threading to speed up to process
+# todo: clean up, move queries/constants to config file
+# todo: decide how to handle the password part
 
 
 def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger):
     """
     This function gets a soup and a url to a search page and fetch the first num_of_articles_to_fetch from
-    it into a csv file
-    :return: True if successful, otherwise False
+    it into a mysql local server
+    :return: num_of_articles_to_fetch if successful, otherwise False
     """
 
     api_header = update_twitch_header()
@@ -65,4 +65,4 @@ def scrape_search_page(search_soup, search_url, num_of_articles_to_fetch, logger
 
     print("error scraping!")
     logger.warning('encountered error while fetching articles')
-    return
+    return False

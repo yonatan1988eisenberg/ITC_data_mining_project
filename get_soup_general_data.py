@@ -1,5 +1,3 @@
-
-
 def get_soup_general_data(soup):
     """
     This function gets a game's soup and returns a dictionary containing general data about the game
